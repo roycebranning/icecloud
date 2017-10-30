@@ -2,10 +2,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
-import Header from "./Header"
+import Login from "./Login";
 
 ReactDOM.render(
-	<Header />,
-	<App />, 
+	<Login />, 
 	document.getElementById("content")
 );
