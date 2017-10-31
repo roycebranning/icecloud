@@ -1,6 +1,6 @@
 import os
 from flaskext.mysql import MySQL
-from werkzeug import check_password_hash
+from werkzeug import generate_password_hash, check_password_hash
 
 # Class to manage all interactions with the database
 class DatabaseController():
@@ -20,3 +20,16 @@ class DatabaseController():
 
             return check_password_hash(result[0], password)
 
+    # Function to change the password for a user in the database
+    # Returns True on success, False on error
+    def changePassword(self, username, old_password, new_password):
+        if self.authenticateUser(username, old_password):
+            new_hash = generate_password_hash(new_password)
+
+            with self.connection.cursor() as cursor:
+                sql = "update users set password = %s where netid = %s"
+                cursor.execute(sql, (new_hash, username))
+
+            return True
+        
+        return False

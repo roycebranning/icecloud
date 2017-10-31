@@ -7,3 +7,5 @@ UNLOCK TABLES;
 LOCK TABLES `access_groups` WRITE;
 INSERT INTO `access_groups` VALUES (1,'resident'),(2,'hall staff');
 UNLOCK TABLES;
+
+insert into users(netid, ndid, first_name, last_name, dorm, room_num, email, password, access_group) values ('rsmick', '901875767', 'Ryan', 'Smick', 13, 311, 'rsmick@nd.edu', 'pbkdf2:sha256:50000$hPJDe3DU$35874b5b78323c8c4c9419109fe4d302150e73f0da5f00f8ec82a15fca4c6172', 2);
