@@ -1,6 +1,7 @@
 # server.py
 from flask import Flask, render_template, session, request, jsonify, redirect, url_for
-from database_controller import DatabaseController
+from project.server.database_controller import DatabaseController
+from project.server.api.iceform import iceform_api
 import os
 
 app = Flask(__name__, static_folder="../static/dist",
@@ -28,11 +29,23 @@ def login():
         else:
             return render_template("login.html")
 
+# Controller for user ICE forms
+@app.route("/iceform", methods=['GET'])
+def iceform():
+    if not 'username' in session:
+        # User isn't authenticated, so redirect them to login page
+        return render_template("index.html")
+
+    return render_template('iceform.html')
+
 # Controller for user logouts
 @app.route("/logout", methods=['GET'])
 def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
+
+# Register blueprints for the REST APIs
+app.register_blueprint(iceform_api, url_prefix='/api/iceform')
 
 if __name__ == "__main__":
 	app.run(host='0.0.0.0',port='5005')
