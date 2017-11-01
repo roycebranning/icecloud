@@ -1,46 +1,9 @@
-// Login.jsx
-import React from 'react';
-import { Form, FormGroup, Col, FormControl, Checkbox, ControlLabel, Button } from "react-bootstrap";
-var $ = require('jquery');
+// login.jsx
+import React from "react";
+import ReactDOM from "react-dom";
+import LoginForm from "./LoginForm";
 
-const formInstance = (
-  <Form horizontal>
-    <FormGroup controlId="formHorizontalEmail">
-      <Col componentClass={ControlLabel} sm={2}>
-        Email
-      </Col>
-      <Col sm={10}>
-        <FormControl type="email" placeholder="Email" />
-      </Col>
-    </FormGroup>
-
-    <FormGroup controlId="formHorizontalPassword">
-      <Col componentClass={ControlLabel} sm={2}>
-        Password
-      </Col>
-      <Col sm={10}>
-        <FormControl type="password" placeholder="Password" />
-      </Col>
-    </FormGroup>
-
-    <FormGroup>
-      <Col smOffset={2} sm={10}>
-        <Checkbox>Remember me</Checkbox>
-      </Col>
-    </FormGroup>
-
-    <FormGroup>
-      <Col smOffset={2} sm={10}>
-        <Button type="submit">
-          Sign in
-        </Button>
-      </Col>
-    </FormGroup>
-  </Form>
+ReactDOM.render(
+	<LoginForm />, 
+	document.getElementById("login_content")
 );
-
-export default class Hello extends React.Component {
-  render () {
-    return formInstance;
-  }
-}
