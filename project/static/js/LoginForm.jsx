@@ -7,7 +7,7 @@ import request from 'superagent';
 const Request = ({ onSubmit }) => (
     <Form onSubmit={onSubmit}>
         <fieldset>
-            <legend>Request</legend>
+            <legend>Login</legend>
             <Input name="username" id="username" label="username" type="text" placeholder="username" required />
             <Input name="password" id="password" label="password" type="text" placeholder="password" required />
         </fieldset>
