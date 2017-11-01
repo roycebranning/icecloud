@@ -48,4 +48,4 @@ def logout():
 app.register_blueprint(iceform_api, url_prefix='/api/iceform')
 
 if __name__ == "__main__":
-	app.run(host='0.0.0.0',port='5005')
+	app.run()
