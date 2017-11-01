@@ -1,7 +1,6 @@
 // App.jsx
 import React from "react";
 import Hello from "./Hello";
-import Login from "./Login"
 import { PageHeader } from "react-bootstrap";
 //import HeaderBackgroundImage from '../images/header.jpg';
 
@@ -18,7 +17,6 @@ export default class App extends React.Component {
     		<PageHeader>
       			<div className='header-contents'>
         		<Hello name='Chiggins' />
-        		<Login />
       			</div>
     		</PageHeader>
   		);

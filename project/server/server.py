@@ -1,5 +1,5 @@
 # server.py
-from flask import Flask, render_template, session, request
+from flask import Flask, render_template, session, request, jsonify, redirect, url_for
 from database_controller import DatabaseController
 import os
 
@@ -16,22 +16,23 @@ def index():
 @app.route("/login", methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
-        if dc.authenticateUser(request.form['username'], request.form['password']):
-            session['username'] = request.form['username']
-            return "Logged in";
+        data = request.get_json()
+        if dc.authenticateUser(data['username'], data['password']):
+            session['username'] = data['username']
+            return jsonify({"result":"Logged in"});
         else:
-            return "Try again";
+            return jsonify({"result":"Try again"});
     else:
         if 'username' in session:
             return "Already logged in"
         else:
-            return render_template("index.html")
+            return render_template("login.html")
 
 # Controller for user logouts
-@app.route("/logout", methods=['POST'])
+@app.route("/logout", methods=['GET'])
 def logout():
     session.pop('username', None)
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 if __name__ == "__main__":
 	app.run()
