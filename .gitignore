@@ -1,3 +1,4 @@
 .env
 __pycache__
 project/static/node_modules
+project/server/database_controller.pyc
