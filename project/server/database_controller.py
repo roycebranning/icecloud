@@ -56,10 +56,10 @@ class DatabaseController():
             cursor.execute(sql, ice_data['father_email'], ice_data['father_emp'], ice_data['father_name'])
 
             sql = "insert into guarded_by values (%s, %s)"
-            cursor.execute(sql ice_data['ndid'], ice_data['mother_email'])
+            cursor.execute(sql, ice_data['ndid'], ice_data['mother_email'])
 
             sql = "insert into guarded_by values (%s, %s)"
-            cursor.execute(sql ice_data['ndid'], ice_data['father_email'])
+            cursor.execute(sql, ice_data['ndid'], ice_data['father_email'])
 
             sql = "insert into emergency_contact values (%s, %s, %s)"
             cursor.execute(sql, ice_data['ec_phone'], ice_data['ec_relation'], ice_data['ec_name'])
