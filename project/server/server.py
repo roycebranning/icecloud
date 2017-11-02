@@ -48,9 +48,19 @@ def logout():
 # controller for adding new user data to the database
 @app.route("/create_account", methods=['POST'])
 def insert_data():
+    data = request.get_json()
+    print(data)
+    dc.insert_resident_data(data)
+    return redirect(url_for('login'))
+
+@app.route("/update_account", methods=['POST'])
+def update_data():
     if not 'username' in session:
+        # User isn't authenticated, so redirect them to login page
         return render_template("index.html")
-    dc.insert_resident_data(request.get_json())
+    data = request.get_json()
+    print(data)
+    dc.update_resident_data(data)
     return redirect(url_for('login'))
 
 # Register blueprints for the REST APIs
