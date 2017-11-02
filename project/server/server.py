@@ -44,6 +44,15 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
+
+# controller for adding new user data to the database
+@app.route("/create_account", methods=['POST'])
+def insert_data():
+    if not 'username' in session:
+        return render_template("index.html")
+    dc.insert_resident_data(request.get_json())
+    return redirect(url_for('login'))
+
 # Register blueprints for the REST APIs
 app.register_blueprint(iceform_api, url_prefix='/api/iceform')
 

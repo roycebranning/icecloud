@@ -107,6 +107,13 @@ CREATE TABLE `emergency_contact` (
   PRIMARY KEY (`phone_number`)
 );
 
+CREATE TABLE `ec_of` (
+  `ndid` char(9) NOT NULL,
+  `ec_phone` varchar(20) NOT NULL,
+  PRIMARY KEY (`ndid`, `ec_phone`),
+  FOREIGN KEY (`ec_phone`) REFERENCES `emergency_contact`(`phone_number`)
+);
+
 CREATE TABLE `medication` (
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`name`)
