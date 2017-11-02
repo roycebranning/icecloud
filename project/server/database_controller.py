@@ -82,35 +82,39 @@ class DatabaseController():
             cursor.execute(sql, (ice_data['netid'], ice_data['ndid'], ice_data['first_name'], ice_data['last_name'], int(ice_data['dorm']), ice_data['room'], ice_data['email'], ice_data['password'], ice_data['ndid']))
 
             #print("inserting basic info...")
-            # insert basic info(addr, name)
-            #sql = "insert into residents values ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            # update basic info(addr, name)
+            #sql = "update into residents values ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             #cursor.execute(sql, (ice_data['netid'], ice_data['street_addr'], ice_data['city'], ice_data['state'], ice_data['country'], ice_data['zip'], ice_data['birthday'], ice_data['class_level'], ice_data['religion'], ice_data['phone_num'], ice_data['insurance']))
 
             print("updating major info...")
-            # insert major information
+            # update major information
             sql = "update enrolled_in set ndid=%s, major=%s where ndid=%s"
             cursor.execute(sql, (ice_data['ndid'], ice_data['major'], ice_data['ndid']))
 
-            '''print("updating mommy info...")
-            # Insert mommy data
-            sql = "insert into parents values (%s, %s, %s)"
-            cursor.execute(sql, (ice_data['mother_email'], ice_data['mother_emp'], ice_data['mother_name']))
-            sql = "insert into guarded_by values (%s, %s)"
-            cursor.execute(sql, (ice_data['ndid'], ice_data['mother_email']))
+            print("updating parent info...")
 
-            print("updating daddy info...")
-            # insert daddy data
+            # update parent data
+            sql = "delete from parents P where email in (select email from guarded_by where ndid = %s) A"
+            cursor.execute(sql, ice_data['ndid'])
+
             sql = "insert into parents values (%s, %s, %s)"
-            cursor.execute(sql, (ice_data['father_email'], ice_data['father_emp'], ice_data['father_name']))
-            sql = "insert into guarded_by values (%s, %s)"
-            cursor.execute(sql, (ice_data['ndid'], ice_data['father_email']))
+            cursor.execute(sql, (ice_data['mother_email'], ice_data['mother_emp'], ice_data['mother_name']))     
+            sql = "insert into parents values (%s, %s, %s)"
+            cursor.execute(sql, (ice_data['father_email'], ice_data['father_emp'], ice_data['father_name']))            
+
+            sql = "update guarded_by set ndid=%s, parent_email=%s where ndid=%s"
+            cursor.execute(sql, (ice_data['ndid'], ice_data['mother_email'], ice_data['ndid']))
 
             print("updating emergency info...")
+            #update emergency contact information
+            sql = "delete from emergency_contact E where ec_phone in (select ec_phone from ec_of where ndid=%s) A"
+            cursor.execute(sql, (ice_data['ndid']))
+
             sql = "insert into emergency_contact values (%s, %s, %s)"
             cursor.execute(sql, (ice_data['ec_phone'], ice_data['ec_relation'], ice_data['ec_name']))
 
-            sql = "insert into ec_of values(%s, %s)"
-            cursor.execute(sql, (ice_data['ndid'], ice_data['ec_phone']))'''
+            sql = "update ec_of set ndid=%s, ec_phone=%s where ndid=%s"
+            cursor.execute(sql, (ice_data['ndid'], ice_data['ec_phone'], ice_data['ndid']))
 
         self.connection.commit()
 
