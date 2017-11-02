@@ -114,6 +114,30 @@ class DatabaseController():
 
         self.connection.commit()
 
+    def delete_account(self, ndid):
+        with self.connection.cursor() as cursor:
+
+            print("deleting from users table...")
+            # delete from users table
+            sql = "delete from users where ndid=%s"
+            cursor.execute(sql, ndid)
+
+            print("deleting from enrolled_in...")
+            # delete from enrolled_in table
+            sql = "delete from enrolled_in where ndid=%s"
+            cursor.execute(sql, ndid)
+
+            print("deleting parents info...")
+            # delete mother from parents table
+            sql = "delete from parents where email in (select parent_email from guarded_by where ndid=%s)"
+            cursor.execute(sql, ndid)
+
+            print("deleting emergency contact info...")
+            # delete ec info from emergency_contact table
+            sql = "delete from emergency_contact where phone_number in (select ec_phone from ec_of where ndid=%s)"
+            cursor.execute(sql, ndid)
+
+        self.connection.commit()
 
 
 

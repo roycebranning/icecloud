@@ -77,7 +77,7 @@ CREATE TABLE `guarded_by` (
   `ndid` char(9) NOT NULL,
   `parent_email` varchar(100) NOT NULL,
   PRIMARY KEY (`ndid`, `parent_email`),
-  FOREIGN KEY (`parent_email`) REFERENCES `parents`(`email`)
+  FOREIGN KEY (`parent_email`) REFERENCES `parents`(`email`) ON DELETE CASCADE
 );
 
 CREATE TABLE `siblings` (
@@ -111,7 +111,7 @@ CREATE TABLE `ec_of` (
   `ndid` char(9) NOT NULL,
   `ec_phone` varchar(20) NOT NULL,
   PRIMARY KEY (`ndid`, `ec_phone`),
-  FOREIGN KEY (`ec_phone`) REFERENCES `emergency_contact`(`phone_number`)
+  FOREIGN KEY (`ec_phone`) REFERENCES `emergency_contact`(`phone_number`) ON DELETE CASCADE
 );
 
 CREATE TABLE `medication` (

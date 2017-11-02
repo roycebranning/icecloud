@@ -63,6 +63,16 @@ def update_data():
     dc.update_resident_data(data)
     return redirect(url_for('login'))
 
+@app.route("/delete_account", methods=['POST'])
+def delete_account():
+    if not 'username' in session:
+        #User isn't authenticated, so redirect them to login page
+        return redirect(url_for('login'))
+    data = request.get_json()
+    print(data)
+    dc.delete_account(data["ndid"])
+    return "Account deleted"
+
 # Register blueprints for the REST APIs
 app.register_blueprint(iceform_api, url_prefix='/api/iceform')
 
