@@ -94,7 +94,7 @@ export default class Example extends Component {
 
 	this.handleSubmit = event => {
 		event.preventDefault();
-		this.props.history.push("/about")
+		this.props.history.push("/info")
 	}
 
     this.state = {

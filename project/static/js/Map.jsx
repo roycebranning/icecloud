@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./Home.css";
 
-export default class About extends Component {
+export default class Map extends Component {
   constructor(props) {
     super(props); 
     console.log(props)
