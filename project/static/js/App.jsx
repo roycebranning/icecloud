@@ -20,7 +20,8 @@ class App extends React.Component {
 		super(props)
 		this.state = {
 			isAuthenticated : false,
-			usr : 'none'			
+			usr : 'none',
+			res_netid : 'none'		
 		};
 
 		this.userHasAuthenticated = (authenticated) => {

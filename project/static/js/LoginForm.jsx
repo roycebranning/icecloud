@@ -28,7 +28,7 @@ export default class Login extends Component {
 		console.log('logged in username: ' + this.state.username);
 		console.log('state usr: ' + this.props.usr)
 		this.props.userHasAuthenticated(true);
-		this.props.addUsername(this.state.username);	
+		this.props.addUsername(this.state.username);
 		this.props.history.push("/landing")
 		console.log('user = ' + this.props.usr);
 		console.log(this.props)
