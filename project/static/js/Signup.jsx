@@ -3,7 +3,7 @@ import request from 'superagent';
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import "./Login.css";
 
-export default class Login extends Component {
+export default class SignUp extends Component {
   constructor(props) {
     super(props);
 	console.log(this.props)
@@ -48,7 +48,7 @@ export default class Login extends Component {
   
   render() {
     return (
-      <div className="Login">
+      <div className="Signup">
         <form onSubmit={this.handleSubmit}>
           <FormGroup controlId="username" bsSize="large">
             <ControlLabel>Email</ControlLabel>
@@ -73,7 +73,7 @@ export default class Login extends Component {
             disabled={!this.validateForm()}
             type="submit"
           >
-            Login
+            Create Account
           </Button>
         </form>
       </div>

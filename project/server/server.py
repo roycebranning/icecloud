@@ -13,6 +13,37 @@ app.secret_key = os.environ['session_key']
 def index():
 	return render_template("index.html")
 
+@app.route("/<path:path>", methods=['GET'])
+def any_root_path(path):
+	return render_template("index.html")
+
+# Controller for user logins
+@app.route("/api/login", methods=['POST'])
+def login():
+	data = request.get_json()
+	if dc.authenticateUser(data['username'], data['password']):
+		session['username'] = data['username']
+		return jsonify({"result":"Logged in"})
+	else:
+		return jsonify({"result":"Try again"})
+
+# controller for adding new user data to the database
+@app.route("/api/create_account", methods=['POST'])
+def insert_data():
+    data = request.get_json()
+    print(data)
+    #dc.insert_resident_data(data)
+	# should probably return a token here as well for session mgmt
+    return jsonify({"result":"User added"})
+
+# return all of the users and their netids
+@app.route("/api/get_residents", methods=['GET'])
+def return_residents():
+    data = dc.get_residents()
+    print(data)
+    return jsonify({"data":data})
+
+"""
 # Controller for user logins
 @app.route("/login", methods=['POST', 'GET'])
 def login():
@@ -28,15 +59,6 @@ def login():
             return "Already logged in"
         else:
             return render_template("login.html")
-
-# Controller for user ICE forms
-@app.route("/iceform", methods=['GET'])
-def iceform():
-    if not 'username' in session:
-        # User isn't authenticated, so redirect them to login page
-        return render_template("index.html")
-
-    return render_template('iceform.html')
 
 # Controller for user logouts
 @app.route("/logout", methods=['GET'])
@@ -75,6 +97,6 @@ def delete_account():
 
 # Register blueprints for the REST APIs
 app.register_blueprint(iceform_api, url_prefix='/api/iceform')
-
+"""
 if __name__ == "__main__":
 	app.run()

@@ -1,0 +1,39 @@
+.Home .lander {
+  padding: 50px 0;
+  text-align: center;
+}
+
+.Home .lander h1 {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+}
+
+.Home .lander p {
+  color: #999;
+}
+
+.Home .lander .bx {
+	background-color: lightgrey;
+    width: 75%;
+    border: 10px solid black;
+    padding: 25%;
+
+}
+
+.Home .lander .Box {
+	margin: auto;
+    width: 100%;
+	height: 60%;
+    border: 2px solid grey;
+    padding: 10px;
+	box-shadow: 5px 5px;
+}
+
+h1 {
+	text-align: left
+}
+
+p {
+	text-align: left
+}
+

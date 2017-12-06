@@ -29,7 +29,7 @@ class DatabaseController():
             with self.connection.cursor() as cursor:
                 sql = "update users set password = %s where netid = %s"
                 cursor.execute(sql, (new_hash, username))
-
+                self.connection.commit()
             return True
         
         return False
@@ -39,7 +39,7 @@ class DatabaseController():
             print("inserting into users table...")
             # inserting into users table
             sql = "insert into users values ( %s, %s, %s, %s, %s, %s, %s, %s, %s )"
-            cursor.execute(sql, (ice_data['netid'], ice_data['ndid'], ice_data['first_name'], ice_data['last_name'], int(ice_data['dorm']), ice_data['room'], ice_data['email'], ice_data['password'],1))
+            cursor.execute(sql, (ice_data['netid'], ice_data['ndid'], ice_data['first_name'], ice_data['last_name'], int(ice_data['dorm']), ice_data['room'], ice_data['email'], 'pass',1))
 
             #print("inserting basic info...")
             # insert basic info(addr, name)
@@ -94,7 +94,7 @@ class DatabaseController():
             print("updating parent info...")
 
             # update parent data
-            sql = "delete from parents P where email in (select email from guarded_by where ndid = %s) A"
+            sql = "delete from parents where email in (select email from guarded_by where ndid = %s)"
             cursor.execute(sql, ice_data['ndid'])
 
             sql = "insert into parents values (%s, %s, %s)"
@@ -107,7 +107,7 @@ class DatabaseController():
 
             print("updating emergency info...")
             #update emergency contact information
-            sql = "delete from emergency_contact E where ec_phone in (select ec_phone from ec_of where ndid=%s) A"
+            sql = "delete from emergency_contact where phone_number in (select ec_phone from ec_of where ndid=%s)"
             cursor.execute(sql, (ice_data['ndid']))
 
             sql = "insert into emergency_contact values (%s, %s, %s)"
@@ -143,5 +143,12 @@ class DatabaseController():
 
         self.connection.commit()
 
+    def get_residents(self):
+        with self.connection.cursor() as cursor:
+            print("querying the db for users and netids")
+            sql = "select first_name, last_name, netid from users"
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            return result
 
 

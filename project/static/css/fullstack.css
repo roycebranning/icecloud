@@ -23,3 +23,11 @@
 .header-contents button:focus {
     outline: None;
 }
+
+.App {
+  margin-top: 15px;
+}
+
+.App .navbar-brand {
+  font-weight: bold;
+}
