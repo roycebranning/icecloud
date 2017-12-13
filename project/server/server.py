@@ -2,6 +2,8 @@
 from flask import Flask, render_template, session, request, jsonify, redirect, url_for
 from project.server.database_controller import DatabaseController
 from project.server.api.iceform import iceform_api
+from project.server.api.acct_mgmt import acct_mgmt_api
+from project.server.api.auth import auth_api
 import os
 
 app = Flask(__name__, static_folder="../static/dist",
@@ -17,86 +19,10 @@ def index():
 def any_root_path(path):
 	return render_template("index.html")
 
-# Controller for user logins
-@app.route("/api/login", methods=['POST'])
-def login():
-	data = request.get_json()
-	if dc.authenticateUser(data['username'], data['password']):
-		session['username'] = data['username']
-		return jsonify({"result":"Logged in"})
-	else:
-		return jsonify({"result":"Try again"})
-
-# controller for adding new user data to the database
-@app.route("/api/create_account", methods=['POST'])
-def insert_data():
-    data = request.get_json()
-    print(data)
-    #dc.insert_resident_data(data)
-	# should probably return a token here as well for session mgmt
-    return jsonify({"result":"User added"})
-
-# return all of the users and their netids
-@app.route("/api/get_residents", methods=['GET'])
-def return_residents():
-    data = dc.get_residents()
-    print(data)
-    return jsonify({"data":data})
-
-"""
-# Controller for user logins
-@app.route("/login", methods=['POST', 'GET'])
-def login():
-    if request.method == 'POST':
-        data = request.get_json()
-        if dc.authenticateUser(data['username'], data['password']):
-            session['username'] = data['username']
-            return jsonify({"result":"Logged in"});
-        else:
-            return jsonify({"result":"Try again"});
-    else:
-        if 'username' in session:
-            return "Already logged in"
-        else:
-            return render_template("login.html")
-
-# Controller for user logouts
-@app.route("/logout", methods=['GET'])
-def logout():
-    session.pop('username', None)
-    return redirect(url_for('login'))
-
-
-# controller for adding new user data to the database
-@app.route("/create_account", methods=['POST'])
-def insert_data():
-    data = request.get_json()
-    print(data)
-    dc.insert_resident_data(data)
-    return redirect(url_for('login'))
-
-@app.route("/update_account", methods=['POST'])
-def update_data():
-    if not 'username' in session:
-        # User isn't authenticated, so redirect them to login page
-        return render_template("index.html")
-    data = request.get_json()
-    print(data)
-    dc.update_resident_data(data)
-    return redirect(url_for('login'))
-
-@app.route("/delete_account", methods=['POST'])
-def delete_account():
-    if not 'username' in session:
-        #User isn't authenticated, so redirect them to login page
-        return redirect(url_for('login'))
-    data = request.get_json()
-    print(data)
-    dc.delete_account(data["ndid"])
-    return "Account deleted"
-
 # Register blueprints for the REST APIs
 app.register_blueprint(iceform_api, url_prefix='/api/iceform')
-"""
+app.register_blueprint(acct_mgmt_api, url_prefix='/api/account')
+app.register_blueprint(auth_api, url_prefix='/api/auth')
+
 if __name__ == "__main__":
 	app.run()

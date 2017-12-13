@@ -55,13 +55,14 @@ export default class About extends Component {
 				    <body>
 
 					  <img id="first_floor" style="display:none"
-					  src="images/105502.jpg" alt="First Floor Floorplan">
+					  src="images/105502.jpg" alt="First Floor Floorplan"></img>
 
 					  <p>Canvas:</p>
 
 					  <canvas id="first_floor_canvas" width="540" height="597">
 					  Your browser does not support the HTML5 canvas tag.
 					  </canvas>
+					</body>
 					<p></p>
 				  </div>
 				</div>

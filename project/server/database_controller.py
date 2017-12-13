@@ -4,9 +4,17 @@ from werkzeug import generate_password_hash, check_password_hash
 
 # Class to manage all interactions with the database
 class DatabaseController():
+
+    instance = None
+
     def __init__(self, app):
         mysql = MySQL(app=app, host='localhost', user=os.environ['db_user'], password=os.environ['db_passwd'], db='keenanknights')
         self.connection = mysql.connect()
+        DatabaseController.instance = self
+
+    @classmethod
+    def get_instance(cls):
+        return cls.instance
 
     # Function to authenticate a user in the database
     def authenticateUser(self, username, password):
@@ -41,10 +49,10 @@ class DatabaseController():
             sql = "insert into users values ( %s, %s, %s, %s, %s, %s, %s, %s, %s )"
             cursor.execute(sql, (ice_data['netid'], ice_data['ndid'], ice_data['first_name'], ice_data['last_name'], int(ice_data['dorm']), ice_data['room'], ice_data['email'], 'pass',1))
 
-            #print("inserting basic info...")
+            print("inserting basic info...")
             # insert basic info(addr, name)
-            #sql = "insert into residents values ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            #cursor.execute(sql, (ice_data['netid'], ice_data['street_addr'], ice_data['city'], ice_data['state'], ice_data['country'], ice_data['zip'], ice_data['birthday'], ice_data['class_level'], ice_data['religion'], ice_data['phone_num'], ice_data['insurance']))
+            sql = "insert into residents values ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            cursor.execute(sql, (ice_data['netid'], ice_data['street_addr'], ice_data['city'], ice_data['state'], ice_data['country'], ice_data['zip'], ice_data['birthday'], ice_data['class_level'], ice_data['religion'], ice_data['phone_num'], ice_data['insurance']))
 
             print("inserting major info...")
             # insert major information
