@@ -191,7 +191,7 @@ class DatabaseController():
             user_data['email'] = result[5]
             
             # get user's allergy info
-            sql = "select allergies.allergy_name, allergies.severity from is_allergic_to, allergies where is_allergic_to.ndid=%s and allergies.name=is_allergic_to.allergy_name"
+            sql = "select is_allergic_to.allergy_name, allergies.name, allergies.severity from is_allergic_to, allergies where is_allergic_to.ndid=%s and allergies.name=is_allergic_to.allergy_name"
             cursor.execute(sql, user_data['ndid'])
             result = cursor.fetchall()
             allergies = []
@@ -203,16 +203,17 @@ class DatabaseController():
             sql = "select asthma, heart_disorder, seizures, diabetes, hypoglycemia, bleeding_tendencies from common_conditions where ndid=%s"
             cursor.execute(sql, user_data['ndid'])
             result = cursor.fetchone()
-            user_data['asthma'] = result[0]
-            user_data['heart_disorder'] = result[1]
-            user_data['seizures'] = result[2]
-            user_data['diabetes'] = result[3]
-            user_data['hypoglycemia']= result[4]
-            user_data['bleeding_tendencies'] = result[5]
+            if result is not None:
+                user_data['asthma'] = result[0]
+                user_data['heart_disorder'] = result[1]
+                user_data['seizures'] = result[2]
+                user_data['diabetes'] = result[3]
+                user_data['hypoglycemia']= result[4]
+                user_data['bleeding_tendencies'] = result[5]
 
             #get dorm info
             sql = "select name from dorms where id=%s"
-            cursor.execute()
+            cursor.execute(sql, user_data['dorm'])
             result = cursor.fetchone()
             user_data['dorm'] = result[0]
 
@@ -233,8 +234,8 @@ class DatabaseController():
             user_data['college'] = result[1]
 
             # parents and guardians information + siblings
-            sql = "select P.email, P.employer, P.name from parents P, guarded_by where guarded_by.ndid=%s and parents.email=guarded_by.parent_email"
-            cursor.execute(sql, user_data['ndid'])
+            sql = "select P.email, P.employer, P.name from parents P, guarded_by where guarded_by.ndid=%s and P.email=guarded_by.parent_email"
+            cursor.execute(sql, (user_data['ndid']))
             result = cursor.fetchall()
             parents = []
             for par in result:
@@ -242,15 +243,15 @@ class DatabaseController():
             user_data['parents'] = parents
 
             sql = "select S.name, S.age, S.type from sibling_of, siblings S where sibling_of.ndid=%s and S.name=sibling_of.sibling_name"
-            cursor.execute(sql, user_data['ndid'])
+            cursor.execute(sql, (user_data['ndid']))
             result = cursor.fetchall()
             sibs = []
             for sib in result:
                 sibs.append({"name": sib[0], "age":sib[1], "type":sib[2]})
             user_data['siblings'] = sibs
             
-            sql = "select C.name, C.description from has_condition, present_condition C where has_condition.ndid=%s and has_condition.condition_name=C.name"
-            cursor.execute(sql, user_data['ndid'])
+            sql = "select C.name, C.description from has_condition, present_conditions C where has_condition.ndid=%s and has_condition.condition_name=C.name"
+            cursor.execute(sql, (user_data['ndid']))
             result = cursor.fetchall()
             conds = []
             for pc in result:
@@ -259,7 +260,7 @@ class DatabaseController():
             
             sql = "select M.med_name from takes M where M.ndid=%s"
             cursor.execute(sql, user_data['ndid'])
-            result = cursor.fecthall()
+            result = cursor.fetchall()
             user_data['medications'] = result
 
             return user_data
