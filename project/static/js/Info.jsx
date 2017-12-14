@@ -74,7 +74,7 @@ export default class Info extends Component {
 					{ card_display }
 				</div>
 				<br></br>
-				<Button onClick={this.goToMap}>Map</Button>
+				<Button href="/map">Map</Button>
 			</div>
 		</div>
 	  )
