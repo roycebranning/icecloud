@@ -82,8 +82,6 @@ const ShortIce = ({ onSubmit }) => (
             <legend>Basic Information</legend>
             <Input name="firstname" id="firstname" label="First Name" type="text" placeholder="First Name" value="Royce" required />
 			<Input name="lastname" id="lastname" label="Last Name" type="text" placeholder="Last Name" value="Branning" required/>
-            <Input name="ndID" id="ndID" label="ndID" type="text" placeholder="ndID" value="1234" required />
-			<Input name="netid" id="netid" label="NetID" type="text" placeholder="ndID" value="rbrannin" required />
 			<Input name="email" id="email" label="Email" type="text" placeholder="joe@joe.com" value="joe@joe.com" required />
             <Input name="date" id="date" value="" label="Date of Birth" type="date" placeholder="This is a date input." />
             <RadioGroup id="yearRadioGrp" name="yearRadioGrp" type="inline" label="Level" options={yearOptions} />
