@@ -7,29 +7,34 @@ import request from 'superagent';
 import "./Home.css"
 import "./Search.css"
 
-// this needs to be generated from the database somehow?!?
 var people = [
   {
     first: 'Charlie',
     last: 'Brown',
-    twitter: 'dancounsell'
+    twitter: 'dancounsell',
+	netid: 'cbrown'
   },
   {
     first: 'Charlotte',
     last: 'White',
-    twitter: 'mtnmissy'
+    twitter: 'mtnmissy',
+	netid: 'cwhite'
   },
   {
     first: 'Chloe',
     last: 'Jones',
-    twitter: 'ladylexy'
+    twitter: 'ladylexy',
+	netid: 'cjones'
   },
   {
     first: 'Cooper',
     last: 'King',
-    twitter: 'steveodom'
+    twitter: 'steveodom',
+	netid: 'cking'
   }
 ];
+
+var ppl_id = {}
 
 // https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#Using_Special_Characters
 function escapeRegexCharacters(str) {
@@ -77,7 +82,6 @@ function renderSuggestion(suggestion, { query }) {
 export default class Example extends Component {
   constructor(props) {
     super(props);
-	console.log(this.props)
 
 	request.get('/api/iceform/get_residents').end( (err, res) => {
 			if (err) return
@@ -86,14 +90,15 @@ export default class Example extends Component {
 			var users = res.body['data']
 			for( var i = 0; i < users.length; i++){
 				console.log('name #' + i + ': ' + users[i])
-				people.push({first:users[i][0],last:users[i][1], twitter:'null'})
-				
+				people.push({first:users[i][0],last:users[i][1], twitter:'null', netid:users[i][2]})
+				ppl_id[users[i][0]+' '+users[i][1]] = users[i][2]	
 			}
 	})
 
 
 	this.handleSubmit = event => {
 		event.preventDefault();
+		this.props.addUsername(ppl_id[this.state.value])
 		this.props.history.push("/info")
 	}
 
