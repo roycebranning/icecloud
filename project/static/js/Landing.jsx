@@ -88,6 +88,7 @@ export default class Example extends Component {
 
 			console.log(res.body)
 			var users = res.body['data']
+			people = []
 			for( var i = 0; i < users.length; i++){
 				console.log('name #' + i + ': ' + users[i])
 				people.push({first:users[i][0],last:users[i][1], twitter:'null', netid:users[i][2]})
@@ -132,6 +133,13 @@ export default class Example extends Component {
       value,
       onChange: this.onChange
     };
+
+	if (!this.props.isAuthenticated) {
+		this.props.history.push("/login");
+	}
+	else if (this.props.accessGroup != 2) {
+		return (<h3>Not Authorized</h3>)
+	}
 
     return (
       <div className="Home">

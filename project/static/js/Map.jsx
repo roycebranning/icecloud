@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./Home.css";
 
-export default class About extends Component {
+export default class Map extends Component {
 	constructor(props) {
 		super(props); 
 		console.log(props)
@@ -23,27 +23,39 @@ export default class About extends Component {
 
 
 		window.onload = function() {
-			var canvas = document.getElementById("first_floor_canvas");
+		
+			var par = document.getElementById("location_par");
+			par.style.fontSize = "24px";
+			var par = document.getElementById("stairs_par");
+			par.style.fontSize = "24px";
+			var canvas = document.getElementById("third_floor_canvas");
 			var ctx = canvas.getContext("2d");
-			var img = document.getElementById("first_floor");
+			var img = document.getElementById("third_floor");
+			img.style.display = "none";
 			drawImageScaled(img, ctx);
 
 			ctx.beginPath();
 			ctx.lineWidth = 2;
-			ctx.moveTo(40,99);
-			ctx.lineTo(64,99);
-			ctx.lineTo(64,24);
-			ctx.lineTo(82,24);
+			ctx.moveTo(138,337);
+			ctx.lineTo(116,337);
+			ctx.lineTo(116,469);
+			ctx.lineTo(182,469);
+			ctx.lineTo(182,450);
 			ctx.strokeStyle = '#ff0000';
 			ctx.stroke();
-
+			
+			var canvas = document.getElementById("first_floor_canvas");
+			var ctx = canvas.getContext("2d");
+			var img = document.getElementById("first_floor");
+			img.style.display = "none";
+			drawImageScaled(img, ctx);
+			
 			ctx.beginPath();
 			ctx.lineWidth = 2;
-			ctx.moveTo(88,294);
-			ctx.lineTo(64,294);
-			ctx.lineTo(64,466);
-			ctx.lineTo(131,466);
-			ctx.lineTo(131,446);
+			ctx.moveTo(147,398);
+			ctx.lineTo(147,416);
+			ctx.lineTo(280,416);
+			ctx.lineTo(280,438);
 			ctx.strokeStyle = '#ff0000';
 			ctx.stroke();
 		};
@@ -52,18 +64,20 @@ export default class About extends Component {
 				<div className="Home">
 				  <div className="lander">
 				    <h1>Map</h1>
-				    <body>
-
-					  <img id="first_floor" style="display:none"
-					  src="images/105502.jpg" alt="First Floor Floorplan"></img>
-
-					  <p>Canvas:</p>
-
-					  <canvas id="first_floor_canvas" width="540" height="597">
+					<p id="location_par">The nearest first aid kit is in room 103. Here is your fastest path:
+					</p>
+					<img id="third_floor" src='https://i.imgur.com/Je5ked5.jpg'>
+					</img>
+					<img id="first_floor" src='https://i.imgur.com/cxmgQvl.jpg'>
+					</img>
+					<canvas id="third_floor_canvas" width="460" height="600">
 					  Your browser does not support the HTML5 canvas tag.
-					  </canvas>
-					</body>
-					<p></p>
+					</canvas>
+					<p id="stairs_par">Take the stairs to the first floor.
+					</p>
+					<canvas id="first_floor_canvas" width="540" height="529">
+					  Your browser does not support the HTML5 canvas tag.
+					</canvas>
 				  </div>
 				</div>
 			   );

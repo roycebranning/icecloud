@@ -265,4 +265,13 @@ class DatabaseController():
 
             return user_data
 
-            
+    def get_user_access_group(self, netid):
+        with self.connection.cursor() as cursor:
+            print("querying the db for a user's access group")
+            sql = "select access_group from users where netid=%s"
+            cursor.execute(sql, (netid))
+            result = cursor.fetchone()
+            return result
+
+
+
