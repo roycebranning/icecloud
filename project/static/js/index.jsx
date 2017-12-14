@@ -8,5 +8,5 @@ ReactDOM.render(
 	<Router>
 		<App />
 	</Router>, 
-	document.getElementById("login_content")
+	document.getElementById("content")
 );

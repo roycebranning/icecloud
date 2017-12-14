@@ -64,15 +64,19 @@ export default class Map extends Component {
 				<div className="Home">
 				  <div className="lander">
 				    <h1>Map</h1>
-					<p id="location_par">The nearest first aid kit is in room 103. Here is your fastest path:</p>
-					<img id="third_floor" src='https://i.imgur.com/Je5ked5.jpg'></img>
-					<img id="first_floor" src='https://i.imgur.com/cxmgQvl.jpg'></img>
+					<p id="location_par">The nearest first aid kit is in room 103. Here is your fastest path:
+					</p>
+					<img id="third_floor" src='https://i.imgur.com/Je5ked5.jpg'>
+					</img>
+					<img id="first_floor" src='https://i.imgur.com/cxmgQvl.jpg'>
+					</img>
 					<canvas id="third_floor_canvas" width="460" height="600">
-					Your browser does not support the HTML5 canvas tag.
+					  Your browser does not support the HTML5 canvas tag.
 					</canvas>
-					<p id="stairs_par">Take the stairs to the first floor.</p>
+					<p id="stairs_par">Take the stairs to the first floor.
+					</p>
 					<canvas id="first_floor_canvas" width="540" height="529">
-					Your browser does not support the HTML5 canvas tag.
+					  Your browser does not support the HTML5 canvas tag.
 					</canvas>
 				  </div>
 				</div>
