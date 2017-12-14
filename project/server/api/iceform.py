@@ -19,6 +19,7 @@ def update_data():
         # User isn't authenticated, so return failure
         return jsonify({"result": "failure", "message": "User not authenticated"})
     data = request.get_json()
+    dc = DatabaseController.get_instance()
     dc.update_resident_data(data)
     return jsonify({"result": "success", "message": "User data updated"})
 
