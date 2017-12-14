@@ -33,6 +33,7 @@ class App extends React.Component {
 			this.setState({ usr : addUser})
 		}
 
+
 		this.handleLogout = event => {
 			request.get('/api/auth/logout').end( (err, res) => {
 	  			if (err) return
