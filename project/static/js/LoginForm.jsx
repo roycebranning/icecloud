@@ -35,7 +35,8 @@ export default class Login extends Component {
 						this.props.history.push("/iceform")
 					}
 				} else {
-					console.log('didnt make it')
+					//console.log('didnt make it, login failed')
+					alert("The username/password you entered is incorrect, please try again")
 				}
 			})
 
