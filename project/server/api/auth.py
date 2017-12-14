@@ -8,7 +8,8 @@ auth_api = Blueprint('auth', __name__, static_folder="../../static/dist", templa
 def login_user():
     data = request.get_json()
     if login(data['username'], data['password']):
-        return jsonify({"result":"success", "message": "Logged in"})
+        dc = DatabaseController.get_instance()
+        return jsonify({"result":"success", "message": "Logged in", "access_group": dc.get_user_access_group(data['username'])[0]})
 
     return jsonify({"result": "failure", "message": "Try again"})
 

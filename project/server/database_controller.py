@@ -234,7 +234,7 @@ class DatabaseController():
 
             # parents and guardians information + siblings
             sql = "select P.email, P.employer, P.name from parents P, guarded_by where guarded_by.ndid=%s and parents.email=guarded_by.parent_email"
-            cursor.execute(sql, user_data['ndid']
+            cursor.execute(sql, user_data['ndid'])
             result = cursor.fetchall()
             parents = []
             for par in result:
@@ -250,7 +250,7 @@ class DatabaseController():
             user_data['siblings'] = sibs
             
             sql = "select C.name, C.description from has_condition, present_condition C where has_condition.ndid=%s and has_condition.condition_name=C.name"
-            cursor.execute(sql, user_data['ndid']
+            cursor.execute(sql, user_data['ndid'])
             result = cursor.fetchall()
             conds = []
             for pc in result:
@@ -264,4 +264,13 @@ class DatabaseController():
 
             return user_data
 
-            
+    def get_user_access_group(self, netid):
+        with self.connection.cursor() as cursor:
+            print("querying the db for a user's access group")
+            sql = "select access_group from users where netid=%s"
+            cursor.execute(sql, (netid))
+            result = cursor.fetchone()
+            return result
+
+
+
