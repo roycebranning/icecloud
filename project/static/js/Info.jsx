@@ -40,9 +40,9 @@ export default class Info extends Component {
 			this.db_info['dorm'] = res.body['data']['dorm']
 			this.db_info['room'] = res.body['data']['room_num']
 			this.db_info['phone_num'] = res.body['data']['phone_number']
-			this.db_info['ec_name'] = res.body['data']['emergency_contacts'][0]['name']
-			this.db_info['ec_phone'] = res.body['data']['emergency_contacts'][0]['phone']
-			this.db_info['ec_relation'] =res.body['data']['emergency_contacts'][0]['relation']
+			this.db_info['ec_name'] = res.body['data']['emergency_contacts'] ? res.body['data']['emergency_contacts'][0]['name'] : null
+			this.db_info['ec_phone'] = res.body['data']['emergency_contacts'] ? res.body['data']['emergency_contacts'][0]['phone'] : null
+			this.db_info['ec_relation'] =res.body['data']['emergency_contacts'] ? res.body['data']['emergency_contacts'][0]['relation'] : null
 			this.db_info['allergies'] = 'none'
 			this.db_info['condiions'] = 'none'
 			this.db_info['medications'] = 'none'
@@ -84,6 +84,13 @@ export default class Info extends Component {
 			<p>Medications: {this.db_info['medications']}</p>
 		  </div>
 		)
+	  }
+
+	  if (!this.props.isAuthenticated) {
+		this.props.history.push('/login');
+	  }
+	  else if (this.props.accessGroup != 2) {
+		return (<h3>Not Authorized</h3>);
 	  }
 
 	  return (

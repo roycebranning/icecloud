@@ -233,11 +233,10 @@ class DatabaseController():
         with self.connection.cursor() as cursor:
 
             # Get users' information from the resident table
-            sql = "select netid, street_address, city, state, country, zip_code, birthday, class_level, religion, phone_number, insurance from residents where netid=%s"
+            sql = "select street_address, city, state, country, zip_code, birthday, class_level, religion, phone_number, insurance from residents where netid=%s"
             cursor.execute(sql, netid)
             result = cursor.fetchone()
             if not result:
-                user_data['netid'] = None
                 user_data['street_address'] = None
                 user_data['city'] = None
                 user_data['state'] = None
@@ -249,17 +248,16 @@ class DatabaseController():
                 user_data['phone_number'] = None
                 user_data['insurance'] = None
             else:
-                user_data['netid'] = result[0]
-                user_data['street_address'] = result[1]
-                user_data['city'] = result[2]
-                user_data['state'] = result[3]
-                user_data['country'] = result[4]
-                user_data['zip_code'] = result[5]
-                user_data['birthday'] = result[6]
-                user_data['class_level'] = result[7]
-                user_data['religion'] = result[8]
-                user_data['phone_number'] = result[9]
-                user_data['insurance'] = result[10]
+                user_data['street_address'] = result[0]
+                user_data['city'] = result[1]
+                user_data['state'] = result[2]
+                user_data['country'] = result[3]
+                user_data['zip_code'] = result[4]
+                user_data['birthday'] = result[5]
+                user_data['class_level'] = result[6]
+                user_data['religion'] = result[7]
+                user_data['phone_number'] = result[8]
+                user_data['insurance'] = result[9]
 
             # Get user's info from the user table
             sql = "select ndid, first_name, last_name, dorm, room_num, email from users where netid=%s"
