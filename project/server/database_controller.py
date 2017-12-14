@@ -229,6 +229,7 @@ class DatabaseController():
 
     def get_resident_info(self, netid):
         user_data = {}
+        user_data['netid'] = netid
         with self.connection.cursor() as cursor:
 
             # Get users' information from the resident table
