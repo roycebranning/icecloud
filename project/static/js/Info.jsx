@@ -8,14 +8,31 @@ export default class Info extends Component {
 		super(props);
 		console.log(props)
 
-		/*request.get('/api/iceform/resident_info/rsmick').end( (err, res) => {
+		this.db_info = {}
+
+		request.get('/api/iceform/resident_info/'+props.usr).end( (err, res) => {
 			if (err) return
 
 			console.log(res.body)
-		})*/
-		this.db_info = {
+			this.db_info['name'] = res.body['data']['first_name'] + ' ' +
+								res.body['data']['last_name']
+			this.db_info['ndid'] = res.body['data']['ndid']
+			this.db_info['netid'] = res.body['data']['netid']
+			this.db_info['dob'] = res.body['data']['birthday']
+			this.db_info['year'] = res.body['data']['class_level']
+			this.db_info['dorm'] = res.body['data']['dorm']
+			this.db_info['room'] = res.body['data']['room_num']
+			this.db_info['phone_num'] = res.body['data']['phone_number']
+			this.db_info['ec_name'] = res.body['data']['emergency_contacts'][0]['name']
+			this.db_info['ec_phone'] = res.body['data']['emergency_contacts'][0]['phone']
+			this.db_info['ec_relation'] =res.body['data']['emergency_contacts'][0]['relation']
+			this.db_info['allergies'] = 'none'
+			this.db_info['condiions'] = 'none'
+			this.db_info['medications'] = 'none'
+		})
+		/*this.db_info = {
 			'response': 'success',
-			'name':'Jimmer Fredette',
+			'name':,
 			'ndid': '901883126',
 			'netid': 'rbranning',
 			'dob':'05/26/1996',
@@ -24,13 +41,13 @@ export default class Info extends Component {
 			'room': '111',
 			'phone_num': '659-154-9425',
 			'ec_name': 'Dianna Branning',
-			'ec_phone': '650-XXX-XXXX',
+			'ec_phone': '650-843-XXXX',
 			'ec_relation': 'Mother',
 			'allergies': 'none',
 			'conditions':'none',
 			'medications':'none'	
 
-		};
+		};*/
 
 		this.state = {
 			active_key: 1
