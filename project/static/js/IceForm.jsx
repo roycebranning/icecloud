@@ -146,8 +146,6 @@ export default class IceForm extends React.Component {
 			motheremployment, fatheremail, fathername, fatheremployment,
 			ec_phone, ec_name, ec_relation, religion, cellphonenum, address,
 			city, state, zip, country, insurance}) => {
-				console.log("yearRadioGrp")
-				console.log(yearRadioGrp)
 				const ice_info = {
 					'last_name' : lastname,
 					'first_name': firstname,
@@ -190,6 +188,11 @@ export default class IceForm extends React.Component {
 	}
 
 	render() {
+
+		if (!this.props.isAuthenticated) {
+			this.props.history.push("/login")
+		}
+
 		return (
 			<div>
 			<div>

@@ -9,6 +9,13 @@ export default class About extends Component {
 
 	render() {
 
+		if (!this.props.isAuthenticated) {
+			this.props.history.push("/login");
+		}
+		else if (this.props.accessGroup != 2) {
+			return (<h3>Not Authorized</h3>);
+		}
+
 		function drawImageScaled(img, ctx) {
 			var canvas = ctx.canvas ;
 			var hRatio = canvas.width  / img.width    ;
