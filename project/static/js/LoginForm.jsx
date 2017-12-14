@@ -22,9 +22,9 @@ export default class Login extends Component {
 
     this.handleSubmit = event => {
       event.preventDefault();
-	  request.post('/api/login').send({'username':this.state.username, 'password':this.state.password}).end( (err, res) => {
+	  request.post('/api/auth/login').send({'username':this.state.username, 'password':this.state.password}).end( (err, res) => {
 	  if (err) return
-	  if (res.body['result'] == "Logged in"){
+	  if (res.body['result'] == "success"){
 		console.log('logged in username: ' + this.state.username);
 		console.log('state usr: ' + this.props.usr)
 		this.props.userHasAuthenticated(true);

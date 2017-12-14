@@ -83,7 +83,7 @@ export default class Example extends Component {
   constructor(props) {
     super(props);
 
-	request.get('/api/get_residents').end( (err, res) => {
+	request.get('/api/iceform/get_residents').end( (err, res) => {
 			if (err) return
 
 			console.log(res.body)

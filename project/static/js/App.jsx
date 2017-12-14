@@ -5,6 +5,7 @@ import { Link, withRouter } from "react-router-dom";
 import Routes from "./Routes";
 import RouteNavItem from "./RouteNavItem";
 //import HeaderBackgroundImage from '../images/header.jpg';
+import request from "superagent";
 
 import {
   BrowserRouter as Router,
@@ -33,10 +34,15 @@ class App extends React.Component {
 		}
 
 		this.handleLogout = event => {
-			console.log("here");
-			console.log(props);
-			this.userHasAuthenticated(false);
-			this.props.history.push("/login");
+			request.get('/api/auth/logout').end( (err, res) => {
+	  			if (err) return
+	  			if (res.body['result'] == "success"){
+					this.userHasAuthenticated(false);
+					this.props.history.push("/login");
+	  			} else {
+		  			console.log('didnt make it')
+	  			}
+			});
 		}
 
 	}

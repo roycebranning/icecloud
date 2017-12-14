@@ -4,9 +4,17 @@ from werkzeug import generate_password_hash, check_password_hash
 
 # Class to manage all interactions with the database
 class DatabaseController():
+
+    instance = None
+
     def __init__(self, app):
         mysql = MySQL(app=app, host='localhost', user=os.environ['db_user'], password=os.environ['db_passwd'], db='keenanknights')
         self.connection = mysql.connect()
+        DatabaseController.instance = self
+
+    @classmethod
+    def get_instance(cls):
+        return cls.instance
 
     # Function to authenticate a user in the database
     def authenticateUser(self, username, password):
@@ -41,10 +49,10 @@ class DatabaseController():
             sql = "insert into users values ( %s, %s, %s, %s, %s, %s, %s, %s, %s )"
             cursor.execute(sql, (ice_data['netid'], ice_data['ndid'], ice_data['first_name'], ice_data['last_name'], int(ice_data['dorm']), ice_data['room'], ice_data['email'], 'pass',1))
 
-            #print("inserting basic info...")
+            print("inserting basic info...")
             # insert basic info(addr, name)
-            #sql = "insert into residents values ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            #cursor.execute(sql, (ice_data['netid'], ice_data['street_addr'], ice_data['city'], ice_data['state'], ice_data['country'], ice_data['zip'], ice_data['birthday'], ice_data['class_level'], ice_data['religion'], ice_data['phone_num'], ice_data['insurance']))
+            sql = "insert into residents values ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            cursor.execute(sql, (ice_data['netid'], ice_data['street_addr'], ice_data['city'], ice_data['state'], ice_data['country'], ice_data['zip'], ice_data['birthday'], ice_data['class_level'], ice_data['religion'], ice_data['phone_num'], ice_data['insurance']))
 
             print("inserting major info...")
             # insert major information
@@ -78,13 +86,13 @@ class DatabaseController():
         with self.connection.cursor() as cursor:
             print("updating users table...")
             # inserting into users table
-            sql = "update users set netid=%s, ndid=%s, first_name=%s, last_name=%s, dorm=%s, room_num=%s, email=%s, password=%s where ndid=%s"
-            cursor.execute(sql, (ice_data['netid'], ice_data['ndid'], ice_data['first_name'], ice_data['last_name'], int(ice_data['dorm']), ice_data['room'], ice_data['email'], ice_data['password'], ice_data['ndid']))
+            sql = "update users set netid=%s, ndid=%s, first_name=%s, last_name=%s, dorm=%s, room_num=%s, email=%s where netid=%s"
+            cursor.execute(sql, (ice_data['netid'], ice_data['ndid'], ice_data['first_name'], ice_data['last_name'], int(ice_data['dorm']), ice_data['room'], ice_data['email'], ice_data['netid']))
 
-            #print("inserting basic info...")
+            print("inserting basic info...")
             # update basic info(addr, name)
-            #sql = "update into residents values ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            #cursor.execute(sql, (ice_data['netid'], ice_data['street_addr'], ice_data['city'], ice_data['state'], ice_data['country'], ice_data['zip'], ice_data['birthday'], ice_data['class_level'], ice_data['religion'], ice_data['phone_num'], ice_data['insurance']))
+            sql = "update residents set netid=%s, street_address=%s, city=%s, state=%s, country=%s, zip_code=%s, birthday=%s, class_level=%s, religion=%s, phone_number=%s, insurance=%s"
+            cursor.execute(sql, (ice_data['netid'], ice_data['street_addr'], ice_data['city'], ice_data['state'], ice_data['country'], ice_data['zip'], ice_data['birthday'], ice_data['class_level'], ice_data['religion'], ice_data['phone_num'], ice_data['insurance']))
 
             print("updating major info...")
             # update major information
@@ -151,4 +159,109 @@ class DatabaseController():
             result = cursor.fetchall()
             return result
 
+    def get_resident_info(self, netid):
+        user_data = {}
+        with self.connection.cursor() as cursor:
 
+            # Get users' information from the resident table
+            sql = "select netid, street_address, city, state, country, zip_code, birthday, class_level, religion, phone_number, insurance from residents where netid=%s"
+            cursor.execute(sql, netid)
+            result = cursor.fetchone()
+            user_data['netid'] = result[0]
+            user_data['street_address'] = result[1]
+            user_data['city'] = result[2]
+            user_data['state'] = result[3]
+            user_data['country'] = result[4]
+            user_data['zip_code'] = result[5]
+            user_data['birthday'] = result[6]
+            user_data['class_level'] = result[7]
+            user_data['religion'] = result[8]
+            user_data['phone_number'] = result[9]
+            user_data['insurance'] = result[10]
+
+            # Get user's info from the user table
+            sql = "select ndid, first_name, last_name, dorm, room_num, email from users where netid=%s"
+            cursor.execute(sql, netid)
+            result = cursor.fetchone()
+            user_data['ndid'] = result[0]
+            user_data['first_name'] = result[1]
+            user_data['last_name'] = result[2]
+            user_data['dorm'] = result[3]
+            user_data['room_num'] = result[4]
+            user_data['email'] = result[5]
+            
+            # get user's allergy info
+            sql = "select allergies.allergy_name, allergies.severity from is_allergic_to, allergies where is_allergic_to.ndid=%s and allergies.name=is_allergic_to.allergy_name"
+            cursor.execute(sql, user_data['ndid'])
+            result = cursor.fetchall()
+            allergies = []
+            for alerg in result:
+                allergies.append(alerg[0])
+            user_data['allergies'] = allergies
+
+            # get user's common conditions
+            sql = "select asthma, heart_disorder, seizures, diabetes, hypoglycemia, bleeding_tendencies from common_conditions where ndid=%s"
+            cursor.execute(sql, user_data['ndid'])
+            result = cursor.fetchone()
+            user_data['asthma'] = result[0]
+            user_data['heart_disorder'] = result[1]
+            user_data['seizures'] = result[2]
+            user_data['diabetes'] = result[3]
+            user_data['hypoglycemia']= result[4]
+            user_data['bleeding_tendencies'] = result[5]
+
+            #get dorm info
+            sql = "select name from dorms where id=%s"
+            cursor.execute()
+            result = cursor.fetchone()
+            user_data['dorm'] = result[0]
+
+            # get emergency contacts for user
+            sql = "select E.phone_number, E.relation, E.name from ec_of, emergency_contact E where ec_of.ndid=%s and E.phone_number=ec_of.ec_phone"
+            cursor.execute(sql, user_data['ndid'])
+            result = cursor.fetchall()
+            emcon = []
+            for ec in result:
+                emcon.append({"name": ec[2], "relation": ec[1], "phone": ec[0]})
+            user_data['emergency_contacts'] = emcon
+
+            # major and college information
+            sql = "select E.major, E.college from enrolled_in, education E where enrolled_in.ndid=%s and enrolled_in.major=E.major"
+            cursor.execute(sql, user_data['ndid'])
+            result = cursor.fetchone()
+            user_data['major'] = result[0]
+            user_data['college'] = result[1]
+
+            # parents and guardians information + siblings
+            sql = "select P.email, P.employer, P.name from parents P, guarded_by where guarded_by.ndid=%s and parents.email=guarded_by.parent_email"
+            cursor.execute(sql, user_data['ndid']
+            result = cursor.fetchall()
+            parents = []
+            for par in result:
+                parents.append({"email": par[0], "name": par[2], "employer" : par[1]})
+            user_data['parents'] = parents
+
+            sql = "select S.name, S.age, S.type from sibling_of, siblings S where sibling_of.ndid=%s and S.name=sibling_of.sibling_name"
+            cursor.execute(sql, user_data['ndid'])
+            result = cursor.fetchall()
+            sibs = []
+            for sib in result:
+                sibs.append({"name": sib[0], "age":sib[1], "type":sib[2]})
+            user_data['siblings'] = sibs
+            
+            sql = "select C.name, C.description from has_condition, present_condition C where has_condition.ndid=%s and has_condition.condition_name=C.name"
+            cursor.execute(sql, user_data['ndid']
+            result = cursor.fetchall()
+            conds = []
+            for pc in result:
+                conds.append({"name": pc[0], "desc":pc[1]})
+            user_data['present_conditions'] = conds
+            
+            sql = "select M.med_name from takes M where M.ndid=%s"
+            cursor.execute(sql, user_data['ndid'])
+            result = cursor.fecthall()
+            user_data['medications'] = result
+
+            return user_data
+
+            

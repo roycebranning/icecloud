@@ -85,8 +85,8 @@ const ShortIce = ({ onSubmit }) => (
             <Input name="ndID" id="ndID" label="ndID" type="text" placeholder="ndID" value="1234" required />
 			<Input name="netid" id="netid" label="NetID" type="text" placeholder="ndID" value="rbrannin" required />
 			<Input name="email" id="email" label="Email" type="text" placeholder="joe@joe.com" value="joe@joe.com" required />
-           <Input name="date" value="" label="Date of Birth" type="date" placeholder="This is a date input." />
-            <RadioGroup name="yearRadioGrp" type="inline" label="Level" options={yearOptions} />
+            <Input name="date" id="date" value="" label="Date of Birth" type="date" placeholder="This is a date input." />
+            <RadioGroup id="yearRadioGrp" name="yearRadioGrp" type="inline" label="Level" options={yearOptions} />
 			<Input name="major" id="major" label="Major" type="text" placeholder="Major" value="CS" required />
             <Input name="religion" id="religion" label="Religion" type="text" placeholder="Religion" value="Christian" required />
             <Input name="hall" id="hall" label="Hall" type="text" placeholder="Hall" value="Keenan" required />
@@ -97,11 +97,10 @@ const ShortIce = ({ onSubmit }) => (
 		<fieldset>
             <legend>Home Information</legend>
             <Input name="address" id="address" label="Address" type="text" placeholder="Address" value="111 Bools Ln" required />
-            <Input name="citystatezip" id="citystatezip" label="City, State, Zip" type="text" placeholder="City, State, Zip" value="MP,CA,11111" required />
+            <Input name="city" id="city" label="City" type="text" placeholder="City" value="Menlo Park" required />
+            <Input name="state" id="state" label="State" type="text" placeholder="State" value="California" required />
+            <Input name="zip" id="zip" label="Zip" type="text" placeholder="Zip" value="11111" required />
             <Input name="country" id="country" label="Country" type="text" placeholder="country" value='USA' required />
-            <Input name="primaryphone" id="primaryphone" label="Primary Phone" type="text" placeholder="Primary Phone" value='1231231234' required />
-            <Input name="secondaryphone" id="secondaryphone" label="Secondary Phone" type="text" help="optional" placeholder="Secondary Phone"/>
-            <RadioGroup name="liveWithRadioGrp" type="inline" label="I live with" options={liveWithOptions} />
 		  </fieldset>
 		  <br></br>
           <fieldset>
@@ -118,13 +117,13 @@ const ShortIce = ({ onSubmit }) => (
                 <RadioGroup name="motherMaritalStatusRadioGrp" type="inline" label="Select one" options={maritalStatusOptions}  />
                 <Input name="motheremail" id="motheremail" label="Mother's Email" type="text" placeholder="Mother's Email" value="m@m.com" required />
                 <Input name="motheremployment" id="motheremployment" label="Mother's Place of Employment" type="text" placeholder="Mother's Place of Employment" value="company" required />
-            <Input name="insurance" id="insurance" label="Medical Insurance Coverave" type="text" placeholder="Insurance Provider" value="rb insurance corp" required />
         </fieldset>
 		<fieldset>
                 <legend>Emergency Contact Information</legend>
                 <Input name="ec_name" id="ec_name" label="Name" type="text" placeholder="Name" value="rb" required />
                 <Input name="ec_relation" id="ec_relation" label="Relation" type="text" placeholder="Ex. Brother, Friend, etc." value="brother" required />
 				<Input name="ec_phone" id="ec_phone" label="EC's Phone" type="text" placeholder="phone number" value="123" required />
+            	<Input name="insurance" id="insurance" label="Medical Insurance Coverave" type="text" placeholder="Insurance Provider" value="rb insurance corp" required />
         </fieldset>
 		<fieldset>
             <Row>
@@ -140,52 +139,65 @@ export default class IceForm extends React.Component {
 	constructor(props) {
 		super(props);
 		console.log(this.props)
-
+		console.log(this.state)
 		this.handleSubmit = event => {
 			this.props.history.push("/landing");
 		}
-		this.onSubmit = ({ lastname, firstname, ndID, netid, 
-				roomnum, email, major, motheremail, mothername, 
-				motheremployment, fatheremail, fathername, fatheremployment,
-				ec_phone, ec_name, ec_relation }) => {
-        const ice_info = {
-            'last_name' : lastname,
-			'first_name': firstname,
-			'ndid' 	    : ndID,
-			'netid'     : netid,
-			'dorm' 		: '1',
-			'room' 		: roomnum,
-			'email' 	: email,
-			'major' 	: major,
-			'mother_email' : motheremail,
-			'mother_emp'   : motheremployment,
-			'mother_name'  : mothername,
-			'father_email' : fatheremail,
-			'father_emp'   : fatheremployment,
-			'father_name'  : fathername,
-			'ec_phone'     : ec_phone,
-			'ec_relation'  : ec_relation,
-			'ec_name' 	   : ec_name,
-        }
- 
-        request.post('/api/create_account').send(ice_info).end( (err, res) => {
-            if (err) return
-			
-			this.props.history.push("/about"); 
-            console.log(res.body)
-        })
+		this.onSubmit = ({ lastname, firstname, ndID, netid, date, yearRadioGrp,
+			roomnum, email, major, motheremail, mothername, 
+			motheremployment, fatheremail, fathername, fatheremployment,
+			ec_phone, ec_name, ec_relation, religion, cellphonenum, address,
+			city, state, zip, country, insurance}) => {
+				console.log("yearRadioGrp")
+				console.log(yearRadioGrp)
+				const ice_info = {
+					'last_name' : lastname,
+					'first_name': firstname,
+					'ndid' 	    : ndID,
+					'netid'     : netid,
+					'birthday'  : date,
+					'class_level': yearRadioGrp,
+					'dorm' 		: '1',
+					'room' 		: roomnum,
+					'email' 	: email,
+					'major' 	: major,
+					'religion': religion,
+					'mother_email' : motheremail,
+					'mother_emp'   : motheremployment,
+					'mother_name'  : mothername,
+					'father_email' : fatheremail,
+					'father_emp'   : fatheremployment,
+					'father_name'  : fathername,
+					'ec_phone'     : ec_phone,
+					'ec_relation'  : ec_relation,
+					'ec_name' 	   : ec_name,
+					'phone_num'    : cellphonenum,
+					'street_addr'  : address,
+					'city': city,
+					'state': state,
+					'zip': zip,
+					'country': country,
+					'insurance': insurance
+				}
+
+				request.post('/api/iceform/update_account').send(ice_info).end( (err, res) => {
+					if (err) return
+
+					this.props.history.push("/about"); 
+					console.log(res.body)
+				})
+
+			}
 
 	}
- 
-        }
- 
-    render() {
-      return (
-        <div>
-          <div>
-              <ShortIce onSubmit={this.onSubmit} />
-          </div>
-        </div>
-      )
-    }
+
+	render() {
+		return (
+			<div>
+			<div>
+			<ShortIce onSubmit={this.onSubmit} />
+			</div>
+			</div>
+		)
+	}
 }
