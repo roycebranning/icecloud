@@ -41,6 +41,13 @@ class DatabaseController():
             return True
         
         return False
+
+    def create_new_user(self, data):
+        with self.connection.cursor() as cursor:
+            sql = "insert into users values (%s, %s, %s ,%s, %s, %s, %s, %s, 1)"
+            cursor.execute(sql, (data['username'], data['ndid'], data['first_name'], data['last_name'], 1, data['room_num'], data['email'], data['password']))
+            self.connection.commit()
+
     def get_user_ndid(self, netid):
         with self.connection.cursor() as cursor:
             sql = "select ndid from users where netid=%s"
@@ -125,7 +132,7 @@ class DatabaseController():
             else:
                 sql = "insert into residents values ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
                 cursor.execute(sql, (ice_data['netid'], ice_data['street_addr'], ice_data['city'], ice_data['state'], ice_data['country'], ice_data['zip'], ice_data['birthday'], ice_data['class_level'], ice_data['religion'], ice_data['phone_num'], ice_data['insurance']))
-            print("updating major info...")
+            #print("updating major info...")
             # update major information
             if self.has_entry_in_table(ndid, 'enrolled_in'):
                 sql = "update enrolled_in set ndid=%s, major=%s where ndid=%s"
@@ -133,7 +140,7 @@ class DatabaseController():
             else :
                 sql = "insert into enrolled_in values (%s, %s)"
                 cursor.execute(sql, (ice_data['ndid'], ice_data['major']))
-            print("updating parent info...")
+            #print("updating parent info...")
 
             if self.has_entry_in_table(ndid, 'guarded_by'):
                 sql = "delete from guarded_by where ndid=%s"
@@ -157,13 +164,13 @@ class DatabaseController():
                     sql = "insert into parents values (%s, %s, %s)"
                     cursor.execute(sql, (ice_data['mother_email'], ice_data['mother_emp'], ice_data['mother_name']))           
             else:
-                print("inserting mommy info...")
+                #print("inserting mommy info...")
                 # Insert mommy data
                 sql = "insert into parents values (%s, %s, %s)"
                 cursor.execute(sql, (ice_data['mother_email'], ice_data['mother_emp'], ice_data['mother_name']))
                 sql = "insert into guarded_by values (%s, %s)"
                 cursor.execute(sql, (ice_data['ndid'], ice_data['mother_email']))
-                print("inserting daddy info...")
+                #print("inserting daddy info...")
                 # insert daddy data
                 sql = "insert into parents values (%s, %s, %s)"
                 cursor.execute(sql, (ice_data['father_email'], ice_data['father_emp'], ice_data['father_name']))
@@ -172,7 +179,7 @@ class DatabaseController():
 
             
             if self.has_entry_in_table(ndid, 'ec_of'):
-                print("updating emergency info...")
+                #print("updating emergency info...")
             #update emergency contact information
                 sql = "delete from ec_of where ndid=%s"
                 cursor.execute(sql, (ice_data['ndid']))

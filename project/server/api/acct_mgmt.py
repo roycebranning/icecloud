@@ -1,5 +1,7 @@
 from flask import Flask, render_template, session, request, Blueprint, jsonify
 from project.server.api.auth import login
+from project.server.database_controller import DatabaseController
+from werkzeug.security import generate_password_hash
 
 acct_mgmt_api = Blueprint('acct_mgmt', __name__, static_folder="../../static/dist", template_folder="../../static")
 
@@ -7,13 +9,12 @@ acct_mgmt_api = Blueprint('acct_mgmt', __name__, static_folder="../../static/dis
 @acct_mgmt_api.route("/create_account", methods=['POST'])
 def insert_data():
     data = request.get_json()
-    #dc.insert_resident_data(data)
-    
-    # Log user in
-    if login():
-        return jsonify({"result":"success", "message": "User added"})
+    dc = DatabaseController.get_instance()
+    data['password'] = generate_password_hash(data['password'])
+    dc.create_new_user(data)
+    return jsonify({"result": "success"})
 
-    return jsonify({"result": "failure", "message": "Account not created"})
+    #return jsonify({"result": "failure", "message": "Account not created"})
 
 @acct_mgmt_api.route("/delete_account", methods=['POST'])
 def delete_account():
