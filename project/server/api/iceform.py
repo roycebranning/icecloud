@@ -26,7 +26,8 @@ def update_data():
         return jsonify({"result": "failure", "message": "User not authenticated"})
     data = request.get_json()
     dc = DatabaseController.get_instance()
-    dc.update_resident_data(data)
+    ndid = dc.get_user_ndid(session['username'])
+    dc.update_resident_data(data,session['username'], ndid)
     return jsonify({"result": "success", "message": "User data updated"})
 
 # return all of the users and their netids
