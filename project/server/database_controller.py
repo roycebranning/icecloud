@@ -235,37 +235,61 @@ class DatabaseController():
             sql = "select netid, street_address, city, state, country, zip_code, birthday, class_level, religion, phone_number, insurance from residents where netid=%s"
             cursor.execute(sql, netid)
             result = cursor.fetchone()
-            user_data['netid'] = result[0]
-            user_data['street_address'] = result[1]
-            user_data['city'] = result[2]
-            user_data['state'] = result[3]
-            user_data['country'] = result[4]
-            user_data['zip_code'] = result[5]
-            user_data['birthday'] = result[6]
-            user_data['class_level'] = result[7]
-            user_data['religion'] = result[8]
-            user_data['phone_number'] = result[9]
-            user_data['insurance'] = result[10]
+            if not result:
+                user_data['netid'] = None
+                user_data['street_address'] = None
+                user_data['city'] = None
+                user_data['state'] = None
+                user_data['country'] = None
+                user_data['zip_code'] = None
+                user_data['birthday'] = None
+                user_data['class_level'] = None
+                user_data['religion'] = None
+                user_data['phone_number'] = None
+                user_data['insurance'] = None
+            else:
+                user_data['netid'] = result[0]
+                user_data['street_address'] = result[1]
+                user_data['city'] = result[2]
+                user_data['state'] = result[3]
+                user_data['country'] = result[4]
+                user_data['zip_code'] = result[5]
+                user_data['birthday'] = result[6]
+                user_data['class_level'] = result[7]
+                user_data['religion'] = result[8]
+                user_data['phone_number'] = result[9]
+                user_data['insurance'] = result[10]
 
             # Get user's info from the user table
             sql = "select ndid, first_name, last_name, dorm, room_num, email from users where netid=%s"
             cursor.execute(sql, netid)
             result = cursor.fetchone()
-            user_data['ndid'] = result[0]
-            user_data['first_name'] = result[1]
-            user_data['last_name'] = result[2]
-            user_data['dorm'] = result[3]
-            user_data['room_num'] = result[4]
-            user_data['email'] = result[5]
+            if not result:
+                user_data['ndid'] = None
+                user_data['first_name'] = None
+                user_data['last_name'] = None
+                user_data['dorm'] = None
+                user_data['room_num'] = None
+                user_data['email'] = None
+            else:
+                user_data['ndid'] = result[0]
+                user_data['first_name'] = result[1]
+                user_data['last_name'] = result[2]
+                user_data['dorm'] = result[3]
+                user_data['room_num'] = result[4]
+                user_data['email'] = result[5]
             
             # get user's allergy info
             sql = "select is_allergic_to.allergy_name, allergies.name, allergies.severity from is_allergic_to, allergies where is_allergic_to.ndid=%s and allergies.name=is_allergic_to.allergy_name"
             cursor.execute(sql, user_data['ndid'])
             result = cursor.fetchall()
-            allergies = []
-            for alerg in result:
-                allergies.append(alerg[0])
-            user_data['allergies'] = allergies
+            if not result:
+                user_data['allergies'] = None
+            else:
+                allergies = []
+                for alerg in result:
+                    allergies.append(alerg[0])
+                user_data['allergies'] = allergies
 
             # get user's common conditions
             sql = "select asthma, heart_disorder, seizures, diabetes, hypoglycemia, bleeding_tendencies from common_conditions where ndid=%s"
@@ -278,58 +302,86 @@ class DatabaseController():
                 user_data['diabetes'] = result[3]
                 user_data['hypoglycemia']= result[4]
                 user_data['bleeding_tendencies'] = result[5]
+            else:
+                user_data['asthma'] = None
+                user_data['heart_disorder'] = None
+                user_data['seizures'] = None
+                user_data['diabetes'] = None
+                user_data['hypoglycemia']= None
+                user_data['bleeding_tendencies'] = None
 
             #get dorm info
             sql = "select name from dorms where id=%s"
             cursor.execute(sql, user_data['dorm'])
             result = cursor.fetchone()
-            user_data['dorm'] = result[0]
-
+            if not result:
+                user_data['dorm'] = result[0]
+            else:
+                user_data['dorm'] = None
             # get emergency contacts for user
             sql = "select E.phone_number, E.relation, E.name from ec_of, emergency_contact E where ec_of.ndid=%s and E.phone_number=ec_of.ec_phone"
             cursor.execute(sql, user_data['ndid'])
             result = cursor.fetchall()
-            emcon = []
-            for ec in result:
-                emcon.append({"name": ec[2], "relation": ec[1], "phone": ec[0]})
-            user_data['emergency_contacts'] = emcon
+            if not result:
+                user_data['emergency_contacts'] = None
+            else:
+                emcon = []
+                for ec in result:
+                    emcon.append({"name": ec[2], "relation": ec[1], "phone": ec[0]})
+                user_data['emergency_contacts'] = emcon
 
             # major and college information
             sql = "select E.major, E.college from enrolled_in, education E where enrolled_in.ndid=%s and enrolled_in.major=E.major"
             cursor.execute(sql, user_data['ndid'])
             result = cursor.fetchone()
-            user_data['major'] = result[0]
-            user_data['college'] = result[1]
+            if not result:
+                user_data['major'] = None
+                user_data['college'] = None
+            else:
+                user_data['major'] = result[0]
+                user_data['college'] = result[1]
 
             # parents and guardians information + siblings
             sql = "select P.email, P.employer, P.name from parents P, guarded_by where guarded_by.ndid=%s and P.email=guarded_by.parent_email"
             cursor.execute(sql, (user_data['ndid']))
             result = cursor.fetchall()
-            parents = []
-            for par in result:
-                parents.append({"email": par[0], "name": par[2], "employer" : par[1]})
-            user_data['parents'] = parents
+            if not result:
+                user_data['parents'] = None
+            else:
+                parents = []
+                for par in result:
+                    parents.append({"email": par[0], "name": par[2], "employer" : par[1]})
+                user_data['parents'] = parents
 
             sql = "select S.name, S.age, S.type from sibling_of, siblings S where sibling_of.ndid=%s and S.name=sibling_of.sibling_name"
             cursor.execute(sql, (user_data['ndid']))
             result = cursor.fetchall()
-            sibs = []
-            for sib in result:
-                sibs.append({"name": sib[0], "age":sib[1], "type":sib[2]})
-            user_data['siblings'] = sibs
+            if not result:
+                user_data['siblings'] = None
+            else:
+                sibs = []
+                for sib in result:
+                    sibs.append({"name": sib[0], "age":sib[1], "type":sib[2]})
+                user_data['siblings'] = sibs
             
             sql = "select C.name, C.description from has_condition, present_conditions C where has_condition.ndid=%s and has_condition.condition_name=C.name"
             cursor.execute(sql, (user_data['ndid']))
             result = cursor.fetchall()
-            conds = []
-            for pc in result:
-                conds.append({"name": pc[0], "desc":pc[1]})
-            user_data['present_conditions'] = conds
+            if not result:
+                user_data['present_conditions'] = None
+            else:
+                conds = []
+                for pc in result:
+                    conds.append({"name": pc[0], "desc":pc[1]})
+                user_data['present_conditions'] = conds
             
             sql = "select M.med_name from takes M where M.ndid=%s"
             cursor.execute(sql, user_data['ndid'])
             result = cursor.fetchall()
-            user_data['medications'] = result
+            if not result:
+                user_data['medications'] = None
+            else:
+                user_data['medications'] = result
 
             return user_data
 
