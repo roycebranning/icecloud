@@ -10,7 +10,24 @@ export default class Info extends Component {
 
 		this.db_info = {}
 
-		request.get('/api/iceform/resident_info/'+props.usr).end( (err, res) => {
+		
+		this.state = {
+			active_key: 1,
+			db_data: {}
+		}
+
+		this.handleSelect = (eventKey) => {
+			this.setState({active_key:eventKey});
+		}
+
+		this.goToMap = event => {
+			this.props.history.push("/map")
+		}
+
+	}
+
+	componentDidMount() {
+		request.get('/api/iceform/resident_info/'+this.props.usr).end( (err, res) => {
 			if (err) return
 
 			console.log(res.body)
@@ -29,37 +46,11 @@ export default class Info extends Component {
 			this.db_info['allergies'] = 'none'
 			this.db_info['condiions'] = 'none'
 			this.db_info['medications'] = 'none'
+
+			
+			this.setState({db_data: this.db_info})
 		})
-		/*this.db_info = {
-			'response': 'success',
-			'name':,
-			'ndid': '901883126',
-			'netid': 'rbranning',
-			'dob':'05/26/1996',
-			'year': 'Senior',
-			'dorm': 'Keenan',
-			'room': '111',
-			'phone_num': '659-154-9425',
-			'ec_name': 'Dianna Branning',
-			'ec_phone': '650-843-XXXX',
-			'ec_relation': 'Mother',
-			'allergies': 'none',
-			'conditions':'none',
-			'medications':'none'	
 
-		};*/
-
-		this.state = {
-			active_key: 1
-		}
-
-		this.handleSelect = (eventKey) => {
-			this.setState({active_key:eventKey});
-		}
-
-		this.goToMap = event => {
-			this.props.history.push("/map")
-		}
 
 	}
 
@@ -68,13 +59,13 @@ export default class Info extends Component {
 	  if ( this.state.active_key == 1){
 		card_display = (
 		  <div>
-			<p>ND ID: {this.db_info['ndid']}</p>
-			<p>NetID: {this.db_info['netid']}</p>
-			<p>DOB: {this.db_info['dob']}</p>
-			<p>Year: {this.db_info['year']}</p>
-			<p>Hall: {this.db_info['dorm']}</p>
-			<p>Room #: {this.db_info['room']}</p>
-			<p>Cell Phone #: {this.db_info['phone_num']}</p>
+			<p>ND ID: {this.state.db_data['ndid']}</p>
+			<p>NetID: {this.state.db_data['netid']}</p>
+			<p>DOB: {this.state.db_data['dob']}</p>
+			<p>Year: {this.state.db_data['year']}</p>
+			<p>Hall: {this.state.db_data['dorm']}</p>
+			<p>Room #: {this.state.db_data['room']}</p>
+			<p>Cell Phone #: {this.state.db_data['phone_num']}</p>
 		  </div>
 		)
 	  } else if( this.state.active_key == 2){
@@ -94,12 +85,13 @@ export default class Info extends Component {
 		  </div>
 		)
 	  }
+
 	  return (
 		<div className="Home">
 			<div className="lander">
 				<Nav bsStyle="tabs" justified activeKey={this.state.active_key} onSelect={this.handleSelect}>
           			<NavItem eventKey={1}>
-						Basic Information
+						Baesic Information
 					</NavItem>
           			<NavItem eventKey={2}>
 						Emergency Contact
