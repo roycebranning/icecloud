@@ -54,9 +54,9 @@ class DatabaseController():
             print(sql)
             cursor.execute(sql, ndid)
             res = cursor.fetchone()
-            if res == 0:
+            if res[0] == 0:
                 return False
-            if res > 0:
+            if res[0] > 0:
                 return True
 
     def insert_resident_data(self, ice_data, netid, ndid):
