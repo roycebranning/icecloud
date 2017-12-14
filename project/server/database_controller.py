@@ -41,8 +41,20 @@ class DatabaseController():
             return True
         
         return False
+    
+    def has_entry_in_table(self, ndid, table):
+        with self.connection.cursor() as cursor:
+            sql = "select count(*) from %s where ndid=%s"
+            cursor.execute(sql, table, ndid)
+            res = cursor.fetchone()
+            if res == 0:
+                return False
+            if res > 0:
+                return True
 
-    def insert_resident_data(self, ice_data):
+    def insert_resident_data(self, ice_data, netid, ndid):
+        ice_data['netid'] = netid
+        ice_data['ndid'] = ndid
         with self.connection.cursor() as cursor:
             print("inserting into users table...")
             # inserting into users table
@@ -82,47 +94,96 @@ class DatabaseController():
 
         self.connection.commit()
 
-    def update_resident_data(self, ice_data):
+    def update_resident_data(self, ice_data, netid, ndid):
+        ice_data['netid'] = netid
+        ice_data['ndid'] = ndid
         with self.connection.cursor() as cursor:
             print("updating users table...")
             # inserting into users table
-            sql = "update users set netid=%s, ndid=%s, first_name=%s, last_name=%s, dorm=%s, room_num=%s, email=%s where netid=%s"
-            cursor.execute(sql, (ice_data['netid'], ice_data['ndid'], ice_data['first_name'], ice_data['last_name'], int(ice_data['dorm']), ice_data['room'], ice_data['email'], ice_data['netid']))
 
-            print("inserting basic info...")
+            if has_enty_in_table(ndid, 'users'):
+                sql = "update users set netid=%s, ndid=%s, first_name=%s, last_name=%s, dorm=%s, room_num=%s, email=%s where ndid=%s"
+                cursor.execute(sql, (netid, ndid, ice_data['first_name'], ice_data['last_name'], int(ice_data['dorm']), ice_data['room'], ice_data['email'], ndid))
+            else:
+                sql = "insert into users values ( %s, %s, %s, %s, %s, %s, %s, %s )"
+                cursor.execute(sql, (ice_data['netid'], ice_data['ndid'], ice_data['first_name'], ice_data['last_name'], int(ice_data['dorm']), ice_data['room'], ice_data['email'],1))
+            #print("inserting basic info...")
             # update basic info(addr, name)
-            sql = "update residents set netid=%s, street_address=%s, city=%s, state=%s, country=%s, zip_code=%s, birthday=%s, class_level=%s, religion=%s, phone_number=%s, insurance=%s"
-            cursor.execute(sql, (ice_data['netid'], ice_data['street_addr'], ice_data['city'], ice_data['state'], ice_data['country'], ice_data['zip'], ice_data['birthday'], ice_data['class_level'], ice_data['religion'], ice_data['phone_num'], ice_data['insurance']))
-
+            sql = "select count(*) from residents where netid=%s"
+            cursor.execute(sql, netid)
+            res = cursor.fetchone()
+            if res > 0:
+                sql = "update residents set netid=%s, street_address=%s, city=%s, state=%s, country=%s, zip_code=%s, birthday=%s, class_level=%s, religion=%s, phone_number=%s, insurance=%s where netid=%s"
+                cursor.execute(sql, (netid, ice_data['street_addr'], ice_data['city'], ice_data['state'], ice_data['country'], ice_data['zip'], ice_data['birthday'], ice_data['class_level'], ice_data['religion'], ice_data['phone_num'], ice_data['insurance'], netid))
+            else:
+                sql = "insert into residents values ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                cursor.execute(sql, (ice_data['netid'], ice_data['street_addr'], ice_data['city'], ice_data['state'], ice_data['country'], ice_data['zip'], ice_data['birthday'], ice_data['class_level'], ice_data['religion'], ice_data['phone_num'], ice_data['insurance']))
             print("updating major info...")
             # update major information
-            sql = "update enrolled_in set ndid=%s, major=%s where ndid=%s"
-            cursor.execute(sql, (ice_data['ndid'], ice_data['major'], ice_data['ndid']))
-
+            if has_entry_in_table(ndid, 'enrolled_in'):
+                sql = "update enrolled_in set ndid=%s, major=%s where ndid=%s"
+                cursor.execute(sql, (ndid, ice_data['major'], ndid))
+            else :
+                sql = "insert into enrolled_in values (%s, %s)"
+                cursor.execute(sql, (ice_data['ndid'], ice_data['major']))
             print("updating parent info...")
 
-            # update parent data
-            sql = "delete from parents where email in (select email from guarded_by where ndid = %s)"
-            cursor.execute(sql, ice_data['ndid'])
+            if has_entry_in_table(ndid, 'guarded_by'):
+                sql = "delete from guarded_by where ndid=%s"
+                cursor.execute(sql, ndid)
+                #sql = "update guarded_by set ndid=%s, parent_email=%s where ndid=%s"
+                #cursor.execute(sql, (ice_data['ndid'], ice_data['mother_email'], ice_data['ndid']))
+                #cursor.execute(sql, (ice_data['ndid'], ice_data['father_email'], ice_data['ndid']))
+                sql = "insert into guarded_by values (%s, %s)"
+                cursor.execute(sql, (ice_data['ndid'], ice_data['mother_email']))
+                cursor.execute(sql, (ice_data['ndid'], ice_data['father_email']))
+                sql = "select count(*) from parents where parent_email=%s"
+                cursor.execute(sql, ice_data['father_email'])
+                res = cursor.fetchone()
+                if res == 0:
+                    sql = "insert into parents values (%s, %s, %s)"
+                    cursor.execute(sql, (ice_data['father_email'], ice_data['father_emp'], ice_data['father_name']))
+                cursor.execute(sql, ice_data['mother_email'])
+                res = cursor.fetchone()
+                if res == 0:
+                    sql = "insert into parents values (%s, %s, %s)"
+                    cursor.execute(sql, (ice_data['mother_email'], ice_data['mother_emp'], ice_data['mother_name']))           
+            else:
+                print("inserting mommy info...")
+                # Insert mommy data
+                sql = "insert into parents values (%s, %s, %s)"
+                cursor.execute(sql, (ice_data['mother_email'], ice_data['mother_emp'], ice_data['mother_name']))
+                sql = "insert into guarded_by values (%s, %s)"
+                cursor.execute(sql, (ice_data['ndid'], ice_data['mother_email']))
 
-            sql = "insert into parents values (%s, %s, %s)"
-            cursor.execute(sql, (ice_data['mother_email'], ice_data['mother_emp'], ice_data['mother_name']))     
-            sql = "insert into parents values (%s, %s, %s)"
-            cursor.execute(sql, (ice_data['father_email'], ice_data['father_emp'], ice_data['father_name']))            
+                print("inserting daddy info...")
+                # insert daddy data
+                sql = "insert into parents values (%s, %s, %s)"
+                cursor.execute(sql, (ice_data['father_email'], ice_data['father_emp'], ice_data['father_name']))
+                sql = "insert into guarded_by values (%s, %s)"
+                cursor.execute(sql, (ice_data['ndid'], ice_data['father_email']))
 
-            sql = "update guarded_by set ndid=%s, parent_email=%s where ndid=%s"
-            cursor.execute(sql, (ice_data['ndid'], ice_data['mother_email'], ice_data['ndid']))
-
-            print("updating emergency info...")
+            
+            if has_entry_in_table(ndid, 'ec_of'):
+                print("updating emergency info...")
             #update emergency contact information
-            sql = "delete from emergency_contact where phone_number in (select ec_phone from ec_of where ndid=%s)"
-            cursor.execute(sql, (ice_data['ndid']))
+                sql = "delete from ec_of where ndid=%s"
+                cursor.execute(sql, (ice_data['ndid']))
 
-            sql = "insert into emergency_contact values (%s, %s, %s)"
-            cursor.execute(sql, (ice_data['ec_phone'], ice_data['ec_relation'], ice_data['ec_name']))
+                sql = "select count(*) from emergency_contacts where phone_numeber=%s"
+                cursor.execute(sql, ice_data['ec_phone'])
+                res = cursor.fetchone()
+                if res == 0:
+                    sql = "insert into emergency_contact values (%s, %s, %s)"
+                    cursor.execute(sql, (ice_data['ec_phone'], ice_data['ec_relation'], ice_data['ec_name']))
 
-            sql = "update ec_of set ndid=%s, ec_phone=%s where ndid=%s"
-            cursor.execute(sql, (ice_data['ndid'], ice_data['ec_phone'], ice_data['ndid']))
+                sql = "insert into ec_of values (%s, %s)"
+                cursor.execute(sql, (ice_data['ndid'], ice_data['ec_phone']))
+            else:
+                sql = "insert into ec_of values (%s, %s)"
+                cursor.execute(sql, (ice_data['ndid'], ice_data['ec_phone']))
+                sql = "insert into emergency_contact values (%s, %s, %s)"
+                cursor.execute(sql, (ice_data['ec_phone'], ice_data['ec_relation'], ice_data['ec_name']))
 
         self.connection.commit()
 
