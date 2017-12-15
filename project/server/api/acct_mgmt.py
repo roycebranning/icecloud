@@ -1,5 +1,7 @@
 from flask import Flask, render_template, session, request, Blueprint, jsonify
 from project.server.api.auth import login
+from project.server.database_controller import DatabaseController
+from werkzeug.security import generate_password_hash
 
 acct_mgmt_api = Blueprint('acct_mgmt', __name__, static_folder="../../static/dist", template_folder="../../static")
 
@@ -7,13 +9,16 @@ acct_mgmt_api = Blueprint('acct_mgmt', __name__, static_folder="../../static/dis
 @acct_mgmt_api.route("/create_account", methods=['POST'])
 def insert_data():
     data = request.get_json()
-    #dc.insert_resident_data(data)
-    
-    # Log user in
-    if login():
-        return jsonify({"result":"success", "message": "User added"})
-
-    return jsonify({"result": "failure", "message": "Account not created"})
+    dc = DatabaseController.get_instance()
+    old_pass = data['password']
+    data['password'] = generate_password_hash(data['password'])
+    res = dc.create_new_user(data)
+    if res:
+        logged_in = login(data['username'], old_pass)
+        print(logged_in)
+        return jsonify({"result": "success"})   
+    else:
+        return jsonify({"result":"failure", "message":"User with this netid/ndid already exists in database. Please make sure the netid/ndid you entered is correct."})
 
 @acct_mgmt_api.route("/delete_account", methods=['POST'])
 def delete_account():

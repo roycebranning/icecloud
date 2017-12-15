@@ -23,18 +23,13 @@ CREATE TABLE `users` (
   `email` varchar(50) NOT NULL,
   `password` varchar(100) NOT NULL,
   `access_group` int(11) NOT NULL,
-  PRIMARY KEY (`netid`),
-  KEY `dorm` (`dorm`),
-  KEY `fk_access_group` (`access_group`),
-  CONSTRAINT `fk_access_group` FOREIGN KEY (`access_group`) REFERENCES `access_groups` (`id`),
-  CONSTRAINT `users_ibfk_1` FOREIGN KEY (`dorm`) REFERENCES `dorms` (`id`)
+  PRIMARY KEY (`netid`)
 );
 
 CREATE TABLE `head_staff` (
   `netid` varchar(10) NOT NULL,
   `position` varchar(20) NOT NULL,
-  PRIMARY KEY (`netid`),
-  CONSTRAINT `head_staff_ibfk_1` FOREIGN KEY (`netid`) REFERENCES `users` (`netid`)
+  PRIMARY KEY (`netid`)
 );
 
 CREATE TABLE `residents` (
@@ -49,8 +44,7 @@ CREATE TABLE `residents` (
   `religion` varchar(30) NOT NULL,
   `phone_number` varchar(20) NOT NULL,
   `insurance` varchar(50) NOT NULL,
-  PRIMARY KEY (`netid`),
-  CONSTRAINT `residents_ibfk_1` FOREIGN KEY (`netid`) REFERENCES `users` (`netid`)
+  PRIMARY KEY (`netid`)
 );
 
 CREATE TABLE `education` (
@@ -62,8 +56,7 @@ CREATE TABLE `education` (
 CREATE TABLE `enrolled_in` (
   `ndid` char(9) NOT NULL,
   `major` varchar(50) NOT NULL,
-  PRIMARY KEY (`ndid`, `major`),
-  FOREIGN KEY (`major`) REFERENCES `education` (`major`)
+  PRIMARY KEY (`ndid`, `major`)
 );
 
 CREATE TABLE `parents` (
@@ -76,8 +69,7 @@ CREATE TABLE `parents` (
 CREATE TABLE `guarded_by` (
   `ndid` char(9) NOT NULL,
   `parent_email` varchar(100) NOT NULL,
-  PRIMARY KEY (`ndid`, `parent_email`),
-  FOREIGN KEY (`parent_email`) REFERENCES `parents`(`email`) ON DELETE CASCADE
+  PRIMARY KEY (`ndid`, `parent_email`)
 );
 
 CREATE TABLE `siblings` (
@@ -96,8 +88,7 @@ CREATE TABLE `parented_by` (
 CREATE TABLE `sibling_of` (
   `ndid` char(9) NOT NULL,
   `sibling_name` varchar(50) NOT NULL,
-  PRIMARY KEY (`ndid`, `sibling_name`),
-  FOREIGN KEY (`sibling_name`) REFERENCES `siblings`(`name`)
+  PRIMARY KEY (`ndid`, `sibling_name`)
 );
 
 CREATE TABLE `emergency_contact` (
@@ -110,8 +101,7 @@ CREATE TABLE `emergency_contact` (
 CREATE TABLE `ec_of` (
   `ndid` char(9) NOT NULL,
   `ec_phone` varchar(20) NOT NULL,
-  PRIMARY KEY (`ndid`, `ec_phone`),
-  FOREIGN KEY (`ec_phone`) REFERENCES `emergency_contact`(`phone_number`) ON DELETE CASCADE
+  PRIMARY KEY (`ndid`, `ec_phone`)
 );
 
 CREATE TABLE `medication` (
@@ -122,8 +112,7 @@ CREATE TABLE `medication` (
 CREATE TABLE `takes` (
   `ndid` char(9) NOT NULL,
   `med_name` varchar(50) NOT NULL,
-  PRIMARY KEY (`ndid`, `med_name`),
-  FOREIGN KEY (`med_name`) REFERENCES `medication`(`name`)
+  PRIMARY KEY (`ndid`, `med_name`)
 );
 
 CREATE TABLE `present_conditions` (
@@ -135,15 +124,13 @@ CREATE TABLE `present_conditions` (
 CREATE TABLE `treated_with` (
   `med_name` varchar(50) NOT NULL,
   `condition_name` varchar(50) NOT NULL,
-  PRIMARY KEY (`med_name`, `condition_name`),
-  FOREIGN KEY (`condition_name`) REFERENCES `present_conditions`(`name`)
+  PRIMARY KEY (`med_name`, `condition_name`)
 );
 
 CREATE TABLE `has_condition` (
   `ndid` varchar(9) NOT NULL,
   `condition_name` varchar(50) NOT NULL,
-  PRIMARY KEY (`ndid`, `condition_name`),
-  FOREIGN KEY (`condition_name`) REFERENCES `present_conditions`(`name`)
+  PRIMARY KEY (`ndid`, `condition_name`)
 );
 
 CREATE TABLE `allergies` (
@@ -155,8 +142,7 @@ CREATE TABLE `allergies` (
 CREATE TABLE `is_allergic_to` (
   `ndid` varchar(9) NOT NULL,
   `allergy_name` varchar(50) NOT NULL,
-  PRIMARY KEY (`ndid`, `allergy_name`),
-  FOREIGN KEY (`allergy_name`) REFERENCES `allergies`(`name`)
+  PRIMARY KEY (`ndid`, `allergy_name`)
 );
 
 CREATE TABLE `common_conditions` (

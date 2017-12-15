@@ -3,7 +3,7 @@ import { Route, Switch } from "react-router-dom";
 import AppliedRoute from "./AppliedRoutes";
 import Home from "./Home";
 import About from "./About";
-import Hello from "./Hello";
+//import Hello from "./Hello";
 import LoginForm from "./LoginForm";
 import SignUp from "./Signup";
 import IceForm from "./IceForm";

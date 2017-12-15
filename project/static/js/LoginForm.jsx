@@ -35,7 +35,8 @@ export default class Login extends Component {
 						this.props.history.push("/iceform")
 					}
 				} else {
-					console.log('didnt make it')
+					//console.log('didnt make it, login failed')
+					alert("The username-password combination you entered is incorrect, please try again")
 				}
 			})
 
@@ -53,7 +54,7 @@ export default class Login extends Component {
 			  <div className="Login">
 				<form onSubmit={this.handleSubmit}>
 				  <FormGroup controlId="username" bsSize="large">
-					<ControlLabel>Email</ControlLabel>
+					<ControlLabel>Netid</ControlLabel>
 					<FormControl
 					  autoFocus
 					  type="username"
