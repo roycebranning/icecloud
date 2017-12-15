@@ -24,6 +24,8 @@ class App extends React.Component {
 			usr : 'none',
 			res_netid : 'none',
 			accessGroup: 0,
+			mapsNeeded: 'none',
+			pointsToDraw: 'none'
 		};
 
 		this.userHasAuthenticated = (authenticated) => {
@@ -36,6 +38,14 @@ class App extends React.Component {
 
 		this.userAccessGroup = (group) => {
 			this.setState({accessGroup : group});
+		}
+		
+		this.setMaps = (maps) => {
+			this.setState({mapsNeeded : maps});
+		}
+		
+		this.setPointsToDraw = (pts) => {
+			this.setState({pointsToDraw : pts});
 		}
 
 		this.handleLogout = event => {
@@ -61,7 +71,12 @@ class App extends React.Component {
 			addUsername: this.addUsername,
 			usr: this.state.usr,
 			userAccessGroup: this.userAccessGroup,
-			accessGroup: this.state.accessGroup
+			accessGroup: this.state.accessGroup,
+
+			mapsNeeded: this.state.mapNeeded,
+			setMaps: this.setMaps,
+			pointsToDraw: this.state.pointsToDraw,
+			setPointsToDraw: this.setPointsToDraw
 		};
 
 		let navbar_items;
@@ -75,7 +90,10 @@ class App extends React.Component {
 				<RouteNavItem key={2} href="/iceform">
 					IceForm
 				</RouteNavItem>
-				<NavItem key={3} onClick={this.handleLogout}>
+				<RouteNavItem key={3} href="/map">
+					Map
+				</RouteNavItem>
+				<NavItem key={4} onClick={this.handleLogout}>
 					Logout
 				</NavItem>
 			</Nav>)
@@ -86,7 +104,10 @@ class App extends React.Component {
 				<RouteNavItem key={1} href="/iceform">
 					IceForm
 				</RouteNavItem>
-				<NavItem key={2} onClick={this.handleLogout}>
+				<RouteNavItem key={2} href="/map">
+					Map
+				</RouteNavItem>
+				<NavItem key={3} onClick={this.handleLogout}>
 					Logout
 				</NavItem>
 			</Nav>)

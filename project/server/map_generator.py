@@ -5,8 +5,15 @@ class MapGenerator():
 	def __init__(self, app):
 		mysql = MySQL(app=app, host='localhost', user=os.environ['db_user'], password=os.environ['db_passwd'], db='keenanknights')
 		self.connection = mysql.connect()
+		MapGenerator.instance = self
 	
-	def generateMaps(self, source, destinations):
+	@classmethod
+	def get_instance(cls):
+		return cls.instance
+
+	def generateMaps(self, source, dest_goal):
+		source = int(source)
+		error = 'none'
 		with self.connection.cursor() as cursor:
 			destFloor = []
 			sql = "select floor_num, room_pixel, hallway from room_pixels where room_num = %s"
@@ -14,8 +21,7 @@ class MapGenerator():
 			result = cursor.fetchone()
 	
 			if not result:
-				print("source room does not exist")
-				#TODO: IF ROOM DOES NOT EXIST
+				error = "source room does not exist"
 				pass
 			srcFloor = result[0]
 			srcPixel = result[1]
@@ -26,13 +32,65 @@ class MapGenerator():
 			srcData = cursor.fetchone()
 	
 			if not srcData:
-				print("source floor does not exist")
-				#TODO: IF ROOM DOES NOT EXIST
+				error = "source floor does not exist"
 				pass
 			srcLocation = self.getRoomLocation(source, srcPixel, srcHall, srcData)
 			srcFloorPixelMap = self.getWalkablePixels(srcData)
-			paths = {}
+			paths = []
 
+			if dest_goal == "exit":
+				sql = "select floor_num, x_pixel, y_pixel from exits where floor_num= %s"
+				cursor.execute(sql, srcFloor)
+				for row in cursor:
+					pathLen = self.getTotalShortestPath(srcLocation, [row[1], row[2]], srcFloorPixelMap, None, srcData, None)
+					paths.append(pathLen)
+			elif dest_goal == "extinguisher":
+				sql = "select floor_num, x_pixel, y_pixel from extinguishers"
+				cursor.execute(sql)
+				rows = []
+				for row in cursor:
+					rows.append(row)
+				for row in rows:
+					sql = "select floor_num, image_width, image_height, west_stairs, west_left_room, west_right_room, west_hallway, north_stairs, north_top_room, north_bot_room, north_hallway from floor_pixels where floor_num = %s"
+					cursor.execute(sql, row[0])
+					destData = cursor.fetchone()
+			
+					if not destData:
+						error = "destination floor does not exist"
+						pass
+					destFloorPixelMap = self.getWalkablePixels(destData)
+					pathLen = self.getTotalShortestPath(srcLocation, [row[1], row[2]], srcFloorPixelMap, destFloorPixelMap, srcData, destData)
+					paths.append(pathLen)
+			elif dest_goal == "first_aid":
+				sql = "select floor_num, x_pixel, y_pixel from first_aid"
+				cursor.execute(sql)
+				rows = []
+				for row in cursor:
+					rows.append(row)
+				for row in rows:
+					sql = "select floor_num, image_width, image_height, west_stairs, west_left_room, west_right_room, west_hallway, north_stairs, north_top_room, north_bot_room, north_hallway from floor_pixels where floor_num = %s"
+					cursor.execute(sql, row[0])
+					destData = cursor.fetchone()
+			
+					if not destData:
+						error = "destination floor does not exist"
+						pass
+					destFloorPixelMap = self.getWalkablePixels(destData)
+					pathLen = self.getTotalShortestPath(srcLocation, [row[1], row[2]], srcFloorPixelMap, destFloorPixelMap, srcData, destData)
+					paths.append(pathLen)
+			
+			shortestPathLen = math.inf
+			points = []
+			floors = ""
+			for path in paths:
+				if path[0] < shortestPathLen:
+					shortestPathLen = path[0]
+					points = path[1]
+					floors = path[2]
+
+			print(points)
+			return {"path":points, "floors":floors, "error":error}
+			'''
 			for dest in destinations:
 				sql = "select floor_num, room_pixel, hallway from room_pixels where room_num = %s"
 				cursor.execute(sql, dest)
@@ -63,23 +121,7 @@ class MapGenerator():
 					pathLen = self.getTotalShortestPath(srcLocation, destLocation, srcFloorPixelMap, destFloorPixelMap, srcData, destData)
 				
 				paths[dest] = pathLen
-			
-			closestDest = None
-			shortestPathLen = math.inf
-			path = []
-			floors = ""
-			for room, pLen in paths.items():
-
-				if pLen[0] < shortestPathLen:
-					shortestPathLen = pLen[0]
-					path = pLen[1]
-					floors = pLen[2]
-					closestDest = room
-
-			return {"room":closestDest, "pathLen":shortestPathLen, "path":path, "floors":floors}
-
-	def drawLines(self, ctx, xVals, yVals):
-		pass
+			'''
 	
 	def getWalkablePixels(self, result):
 		w, h = result[1], result[2]
@@ -142,10 +184,10 @@ class MapGenerator():
 
 
 	def getTotalShortestPath(self, srcLocation, destLocation, srcFloorPixelMap, destFloorPixelMap, srcData, destData):
-		if destFloorPixelMap is None:
+		if destFloorPixelMap is None or destData[0] == srcData[0]:
 			# the cost is just the path from one to the other because they are on the same floor
 			path = self.getShortestPath(srcLocation, destLocation, srcFloorPixelMap)
-			return [path[0], path[1], [srcData[0]]]
+			return [path[0], [path[1]], [srcData[0]]]
 		else:
 			floors = [srcData[0], destData[0]]
 

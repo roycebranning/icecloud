@@ -11,6 +11,7 @@ import IceForm from "./IceForm";
 import Example from "./Landing";
 import Info from "./Info";
 import Map from "./Map";
+import GetMap from "./GetMap";
 import NotFound from "./NotFound";
 
 
@@ -23,7 +24,7 @@ export default ({ childProps }) =>
 	<AppliedRoute path="/signup" component={SignUp} props={childProps} />
 	<AppliedRoute path ="/iceform" component={IceForm} props={childProps} />
 	<AppliedRoute path ="/landing" component={Example} props={childProps} />
-	<AppliedRoute path="/map" component={Map} props={childProps} />
+	<AppliedRoute path="/map" component={GetMap} props={childProps} />
 	<AppliedRoute path ="/info" component={Info} props={childProps} />
 	<Route component={NotFound} />
   </Switch>;

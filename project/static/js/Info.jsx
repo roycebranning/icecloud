@@ -98,7 +98,6 @@ export default class Info extends Component {
 					<hr></hr>
 				</div>
 				<br></br>
-				<Button href='/map'>Map</Button>
 				<Button onClick={this.goToMap}>Map</Button>
 			</div>
 		</div>
