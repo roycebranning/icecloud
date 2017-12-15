@@ -44,9 +44,20 @@ class DatabaseController():
 
     def create_new_user(self, data):
         with self.connection.cursor() as cursor:
-            sql = "insert into users values (%s, %s, %s ,%s, %s, %s, %s, %s, 1)"
-            cursor.execute(sql, (data['username'], data['ndid'], data['first_name'], data['last_name'], 1, data['room_num'], data['email'], data['password']))
-            self.connection.commit()
+
+            sql = "select count(*) from users where netid=%s"
+            cursor.execute(sql, data['username'])
+            res1 = cursor.fetchone()
+            sql = "select count(*) from users where ndid=%s"
+            cursor.execute(sql, data['ndid'])
+            res2 = cursor.fetchone()
+            if int(res1[0]) == 0 and int(res2[0] == 0):
+                sql = "insert into users values (%s, %s, %s ,%s, %s, %s, %s, %s, 1)"
+                cursor.execute(sql, (data['username'], data['ndid'], data['first_name'], data['last_name'], 1, data['room_num'], data['email'], data['password']))
+                self.connection.commit()
+                return True
+            else:
+                return False
 
     def get_user_ndid(self, netid):
         with self.connection.cursor() as cursor:
@@ -70,36 +81,36 @@ class DatabaseController():
         ice_data['netid'] = netid
         ice_data['ndid'] = ndid
         with self.connection.cursor() as cursor:
-            print("inserting into users table...")
+            #print("inserting into users table...")
             # inserting into users table
             sql = "insert into users values ( %s, %s, %s, %s, %s, %s, %s, %s, %s )"
             cursor.execute(sql, (ice_data['netid'], ice_data['ndid'], ice_data['first_name'], ice_data['last_name'], int(ice_data['dorm']), ice_data['room'], ice_data['email'], 'pass',1))
 
-            print("inserting basic info...")
+            #print("inserting basic info...")
             # insert basic info(addr, name)
             sql = "insert into residents values ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             cursor.execute(sql, (ice_data['netid'], ice_data['street_addr'], ice_data['city'], ice_data['state'], ice_data['country'], ice_data['zip'], ice_data['birthday'], ice_data['class_level'], ice_data['religion'], ice_data['phone_num'], ice_data['insurance']))
 
-            print("inserting major info...")
+            #print("inserting major info...")
             # insert major information
             sql = "insert into enrolled_in values (%s, %s)"
             cursor.execute(sql, (ice_data['ndid'], ice_data['major']))
 
-            print("inserting mommy info...")
+            #print("inserting mommy info...")
             # Insert mommy data
             sql = "insert into parents values (%s, %s, %s)"
             cursor.execute(sql, (ice_data['mother_email'], ice_data['mother_emp'], ice_data['mother_name']))
             sql = "insert into guarded_by values (%s, %s)"
             cursor.execute(sql, (ice_data['ndid'], ice_data['mother_email']))
 
-            print("inserting daddy info...")
+            #print("inserting daddy info...")
             # insert daddy data
             sql = "insert into parents values (%s, %s, %s)"
             cursor.execute(sql, (ice_data['father_email'], ice_data['father_emp'], ice_data['father_name']))
             sql = "insert into guarded_by values (%s, %s)"
             cursor.execute(sql, (ice_data['ndid'], ice_data['father_email']))
 
-            print("inserting emergency info...")
+            #print("inserting emergency info...")
             sql = "insert into emergency_contact values (%s, %s, %s)"
             cursor.execute(sql, (ice_data['ec_phone'], ice_data['ec_relation'], ice_data['ec_name']))
 
@@ -112,7 +123,7 @@ class DatabaseController():
         ice_data['netid'] = netid
         ice_data['ndid'] = ndid
         with self.connection.cursor() as cursor:
-            print("updating users table...")
+            #print("updating users table...")
             # inserting into users table
 
             if self.has_entry_in_table(ndid, 'users'):

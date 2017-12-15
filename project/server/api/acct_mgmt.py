@@ -10,11 +10,15 @@ acct_mgmt_api = Blueprint('acct_mgmt', __name__, static_folder="../../static/dis
 def insert_data():
     data = request.get_json()
     dc = DatabaseController.get_instance()
+    old_pass = data['password']
     data['password'] = generate_password_hash(data['password'])
-    dc.create_new_user(data)
-    return jsonify({"result": "success"})
-
-    #return jsonify({"result": "failure", "message": "Account not created"})
+    res = dc.create_new_user(data)
+    if res:
+        logged_in = login(data['username'], old_pass)
+        print(logged_in)
+        return jsonify({"result": "success"})   
+    else:
+        return jsonify({"result":"failure", "message":"User with this netid/ndid already exists in database. Please make sure the netid/ndid you entered is correct."})
 
 @acct_mgmt_api.route("/delete_account", methods=['POST'])
 def delete_account():

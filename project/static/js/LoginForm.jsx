@@ -36,7 +36,7 @@ export default class Login extends Component {
 					}
 				} else {
 					//console.log('didnt make it, login failed')
-					alert("The username/password you entered is incorrect, please try again")
+					alert("The username-password combination you entered is incorrect, please try again")
 				}
 			})
 

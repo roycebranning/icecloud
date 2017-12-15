@@ -65,7 +65,7 @@ const Ice = ({ onSubmit }) => (
                 <Input name="motheremail" id="motheremail" label="Mother's Email" type="text" placeholder="Mother's Email" required />
                 <Input name="motheremployment" id="motheremployment" label="Mother's Place of Employment" type="text" placeholder="Mother's Place of Employment" required />
             </fieldset>
-            <Input name="insurance" id="insurance" label="Medical Insurance Coverave" type="text" placeholder="Insurance Provider" required />
+            <Input name="insurance" id="insurance" label="Medical Insurance Coverage" type="text" placeholder="Insurance Provider" required />
         </fieldset>
         /*TODO ADD SIBLINGS*/
         <fieldset>
