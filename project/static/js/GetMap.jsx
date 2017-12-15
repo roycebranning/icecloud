@@ -128,6 +128,11 @@ export default class GetMap extends Component {
 	}
 
 	render() {
+
+		if(!this.props.isAuthenticated) {
+			this.props.history.push('/login');
+		}
+
 		return (
 			  <div id="div1" className="Map">
 				<form onSubmit={this.handleSubmit}>
